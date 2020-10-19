@@ -20,7 +20,7 @@ spring:
   profiles: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.23.16.23:3306/mobilepark?autoReconnect=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://172.23.16.23:3306/airtalk?autoReconnect=true&useSSL=false&serverTimezone=UTC
     username: root
     password: root123
   jpa:

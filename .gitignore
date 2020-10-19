@@ -21,3 +21,6 @@ out/
 .sts4-cache
 
 src/main/webapp/
+
+### JAVA ###
+*.class
