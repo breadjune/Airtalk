@@ -1,10 +1,13 @@
 package com.mobilepark.airtalk.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.mobilepark.airtalk.data.Menu;
+import com.mobilepark.airtalk.data.MenuFunc;
 import com.mobilepark.airtalk.service.MenuService;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,5 +53,25 @@ public class MenuController {
             return 0;
     }
 
-    
+    @RequestMapping(value = "/detail",method = RequestMethod.GET)
+    @ResponseBody
+    public Menu detail(@RequestParam(value="id") String id){
+        System.out.println("detail");
+        System.out.println("id : " + id);
+        return menuService.getDetail(Integer.parseInt(id));
+    }
+
+    @RequestMapping(value = "/function", method = RequestMethod.GET)
+    @ResponseBody
+    public List<MenuFunc> getMenufunc(@RequestParam(value="id") String id){
+        System.out.println("getMenufunc - " + id);
+
+        // JSONArray req_array = new JSONArray();
+        return menuService.getMenuFunc(Integer.parseInt(id));
+        // List<MenuFunc> mlist = menuService.getMenuFunc(Integer.parseInt(id));
+        // for(int i=0; i<mlist.size(); i++){
+        //     req_array.add(mlist.get(i));
+        // }
+        // return req_array;
+    }
 }
