@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/admin/admin-list")
+@RequestMapping("/admin/adminList")
 public class AdminController {
 
     @Autowired
@@ -23,8 +23,8 @@ public class AdminController {
 
     @GetMapping(value = "/adminSearch")
     @ResponseBody
-    public ModelAndView admin_list(HttpServletRequest req) {
-        ModelAndView mav = new ModelAndView("admin/admin-list/adminSearch");
+    public ModelAndView adminList(HttpServletRequest req) {
+        ModelAndView mav = new ModelAndView("admin/adminList/adminSearch");
 
         List<Admin> adminList = adminService.getAdminList();
 
