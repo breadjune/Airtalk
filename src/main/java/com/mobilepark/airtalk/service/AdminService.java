@@ -9,7 +9,9 @@ import com.mobilepark.airtalk.data.Admin;
 import com.mobilepark.airtalk.repository.AdminRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AdminService {
     private static final Logger logger = LoggerFactory.getLogger(AdminService.class);
 
