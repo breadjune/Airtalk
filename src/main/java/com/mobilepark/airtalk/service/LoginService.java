@@ -18,10 +18,9 @@ public class LoginService {
     @Autowired
     public AdminRepository adminRepository;
 
-    public Admin isLogin(String id, String pw) {
+    public Admin isLogin(String email, String pw) {
         logger.info("isLogin() invoked");
-        // return adminRepository.findByAdminIdAndPassword(id, pw);
-        return null;
+        return adminRepository.findByAdminIdAndPassword(email, pw);
     }
 
 }

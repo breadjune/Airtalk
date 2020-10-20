@@ -34,19 +34,28 @@ public class LoginController {
         
         Map<String, String> map = new HashMap<>();
         
-        String id = form.get("id").toString();
-        String pw = form.get("pw").toString();
+        logger.info("form data : " + form.toString());
 
-        // Admin admin = loginService.isLogin(id, pw);
+        String email = form.get("email").toString();
+        String pw = form.get("password").toString();
+
+        logger.info("email : " + email);
+        logger.info("pw : " + pw);
+
+        Admin admin = loginService.isLogin(email, pw);
         
+        //logger.info("admin data : " + admin.getAdminId());
+
         String errorCode = "";
 
-        // if (admin != null) errorCode = "0";
-        // else errorCode = "-1";
-
-        // map.put("name", admin.getAdminName());
-        // map.put("adminGroupSeq", admin.getAdminGroupSeq());
-        // map.put("errorCode", errorCode);
+        if (admin != null) {
+            map.put("name", admin.getAdminName());
+            map.put("adminGroupSeq", String.valueOf(admin.getAdminGroupSeq()));
+            map.put("errorCode", errorCode);
+            errorCode = "0";
+        } else {
+            errorCode = "-1";
+        }
 
         return map;
 
