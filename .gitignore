@@ -25,3 +25,4 @@ src/main/webapp/
 ### JAVA ###
 *.class
 access_log.*
+static/

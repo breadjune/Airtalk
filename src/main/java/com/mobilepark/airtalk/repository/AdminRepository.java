@@ -7,4 +7,7 @@ import com.mobilepark.airtalk.data.Admin;
 
 @Repository
 public interface AdminRepository extends JpaRepository<Admin, String> {
+
+    public Admin findByAdminIdAndPassword(String email, String pw);
+
 }
