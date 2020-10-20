@@ -1,5 +1,12 @@
 package com.mobilepark.airtalk.controller;
 
+import com.mobilepark.airtalk.data.Admin;
+import com.mobilepark.airtalk.service.AdminService;
+import com.mobilepark.airtalk.service.LoginService;
+
+import java.util.Map;
+import java.util.HashMap;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
@@ -21,7 +28,7 @@ public class LoginController {
     @Autowired
     public LoginService loginService;
 
-    @RequestMapping("/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, String> login(@RequestBody JSONObject form) {
         
@@ -30,15 +37,16 @@ public class LoginController {
         String id = form.get("id").toString();
         String pw = form.get("pw").toString();
 
-        boolean check = loginService.isLogin(id, pw);
+        // Admin admin = loginService.isLogin(id, pw);
+        
+        String errorCode = "";
 
-        if (check != 0) {
-            String errorState = "-1";
-        else String errorState = "0";
+        // if (admin != null) errorCode = "0";
+        // else errorCode = "-1";
 
-        map.put("uid", id);
-        map.put("errorState", errorState);
-        map.put("isAuth", check);
+        // map.put("name", admin.getAdminName());
+        // map.put("adminGroupSeq", admin.getAdminGroupSeq());
+        // map.put("errorCode", errorCode);
 
         return map;
 

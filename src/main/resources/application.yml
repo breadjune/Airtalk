@@ -17,6 +17,9 @@ server:
     basedir: .
 
 spring:
+  devtools:
+    livereload:
+      enabled: true
   profiles: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
