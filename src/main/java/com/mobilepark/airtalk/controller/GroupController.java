@@ -1,31 +1,53 @@
 package com.mobilepark.airtalk.controller;
 
+import com.mobilepark.airtalk.data.Group;
+import com.mobilepark.airtalk.service.AuthGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.json.simple.JSONArray; //JSON배열 사용
+import java.util.Iterator;
+import com.mobilepark.airtalk.util.DateUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/group")
 public class GroupController {
-
     private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
 
-    @RequestMapping(value = "/selectGroupListBySearchWord.json")
-    public @ResponseBody String selectGroupListBySearchWord(Model model, @RequestBody String form) {
+    @Autowired
+    public AuthGroupService authGroupService;
 
-        
+    // 테스트 
+    // @RequestMapping(value = "/search.json")
+    // public @ResponseBody String searchData( Model model){
+    //     logger.info("GroupController");
+    //     return "test";
+    // }
+
+    @RequestMapping(value="/search.json" )
+    public @ResponseBody String search (Model model, @RequestBody String form) {
+        List<String> row;
+        JSONArray req_array = new JSONArray();
+        String data = "";
+
 
         String searchWord = "";
         String searchType = "";
@@ -45,49 +67,28 @@ public class GroupController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
-      
-        String data = "";
-        
-        JSONArray req_array = new JSONArray();
-        JSONObject jsonObject1 = new JSONObject();
-        if(searchWord.equals("") || searchWord.equals("김애선")){
-            jsonObject1.put("adminId", "kas0610");
-            jsonObject1.put("adminName","한재선");
-            jsonObject1.put("phone","01012341234");
-            jsonObject1.put("email","kas0610@mail.com");
 
-            req_array.add(jsonObject1);
+
+        try {
+            List<Group> authGroupList = authGroupService.search();
+            
+            
+            for(Group authGroup : authGroupList) {
+                if(searchWord.equals("") || searchWord.equals(authGroup.getName())){
+                  JSONObject jsonObject = new JSONObject();
+                  jsonObject.put("authGroupSeq",authGroup.getAuthGroupSeq().toString());
+                  jsonObject.put("authName",authGroup.getName());
+                  jsonObject.put("desc",authGroup.getDescription());
+                  jsonObject.put("regDate",DateUtil.dateToString(authGroup.getRegDate(), "yyyy-MM-dd HH:MM"));
+               
+                  req_array.add(jsonObject);
+                }
+            }
+            data = req_array.toString();
+
+        } catch(Exception e) {
+            logger.error(e.getMessage());
         }
-        
-        
-        JSONObject jsonObject2 = new JSONObject();
-        if(searchWord.equals("") || searchWord.equals("홍길동")){
-            jsonObject2.put("adminId","kas0584");
-            jsonObject2.put("adminName","홍길동");
-            jsonObject2.put("phone","01012341234");
-            jsonObject2.put("email","kas0584@mail.com");
-
-            req_array.add(jsonObject2);
-        }
-        
-
-        JSONObject jsonObject3 = new JSONObject();
-        if(searchWord.equals("") || searchWord.equals("전지현")){
-            jsonObject3.put("adminId","kas1234");
-            jsonObject3.put("adminName","전지현");
-            jsonObject3.put("phone","01012341234");
-            jsonObject3.put("email","kas1234@mail.com");
-
-            req_array.add(jsonObject3);
-        }
-
-        data = req_array.toString();
-        
-        //JSONObject jsonObject = new JSONObject();
-        //jsonObject.put("items", req_array);
-        //data = jsonObject.toJSONString();
-
         logger.info(data);
 
         return data;
@@ -114,12 +115,5 @@ public class GroupController {
         return data;
     }
 
-
-    @RequestMapping(value = "/search.json")
-    public @ResponseBody String searchData( Model model){
-
-        logger.info("GroupController");
-        return "test";
-    }
 
 }
