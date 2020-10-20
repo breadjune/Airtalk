@@ -8,10 +8,5 @@ import java.util.List;
 import com.mobilepark.airtalk.data.Admin;
 
 @Repository
-public class AdminRepository extends JpaRepository<Admin, String>{
-
-	public List<Admin> findAll() {
-		return null;
-	}
-    
+public interface AdminRepository extends JpaRepository<Admin, String> {
 }
