@@ -7,5 +7,5 @@ import com.mobilepark.airtalk.data.Login;
 
 @Repository
 public class LoginRepository extends JpaRepository {
-    public Boolean findByUserNameAndPassword(Integer id);
+    public Boolean existsByAdminIdAndPassword(String id, String pw);
 }

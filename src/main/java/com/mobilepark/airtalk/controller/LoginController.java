@@ -32,8 +32,9 @@ public class LoginController {
 
         boolean check = loginService.isLogin(id, pw);
 
-        if (check != 0) String errorState = -1;
-        else String errorState = 0;
+        if (check != 0) {
+            String errorState = "-1";
+        else String errorState = "0";
 
         map.put("uid", id);
         map.put("errorState", errorState);

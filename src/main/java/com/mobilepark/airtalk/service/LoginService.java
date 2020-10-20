@@ -21,7 +21,7 @@ public class LoginService {
     public LoginRepository loginRepository;
 
     public Boolean isLogin(String id, String pw) {
-        logger.info("isLogin() invoked")
-        return loginRepository.login(id, pw);
+        logger.info("isLogin() invoked");
+        return loginRepository.existsByAdminIdAndPassword(id, pw);
     }
 }
