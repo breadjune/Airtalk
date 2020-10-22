@@ -1,5 +1,6 @@
 package com.mobilepark.airtalk.controller;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/admin/adminList")
+@RequestMapping("/admin/admin-list")
 public class AdminController {
 
     @Autowired
@@ -23,13 +24,17 @@ public class AdminController {
 
     @GetMapping(value = "/adminSearch")
     @ResponseBody
-    public ModelAndView adminList(HttpServletRequest req) {
-        ModelAndView mav = new ModelAndView("admin/adminList/adminSearch");
-
+    public List<Admin> adminList(HttpServletRequest req) {
         List<Admin> adminList = adminService.getAdminList();
 
-        mav.addObject("adminList", adminList);
+        // ModelAndView mav = new ModelAndView("adminList");
 
-        return mav;
+        // for(int i = 0; i < adminList.size(); i++) {
+        //     System.out.println("--------- adminList : " + adminList.get(i));
+        // }
+
+        // mav.addObject("adminList", adminList);
+
+        return adminList;
     }
 }

@@ -19,7 +19,7 @@ public class AdminService {
     public AdminRepository adminRepository;
 
     public List<Admin> getAdminList(){
-        logger.info("getAmdinList!");
+        logger.info("--------- getAmdinList!");
         return adminRepository.findAll();
     }
 }
