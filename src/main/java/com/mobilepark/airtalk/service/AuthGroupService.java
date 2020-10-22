@@ -77,31 +77,31 @@ public class AuthGroupService {
     //     return adminGroupAuthList;
     // }
 
-    // @Transactional
-    // public AdminGroup create(String name, String description, String arrayAuth) {
-    //     AdminGroup adminGroup = null;
-    //     AdminGroupAuth adminGroupAuth = null;
-    //     JSONObject jsonObject = null;
+    @Transactional
+    public Group create(String name, String description, String arrayAuth) {
+        Group Group = null;
+        // AuthGroup AuthGroup = null;
+        JSONObject jsonObject = null;
 
-    //     try {
-    //         /* 그룹 등록 처리 START */
-    //         adminGroup = new AdminGroup();
-    //         adminGroup.setName(name);
-    //         adminGroup.setDescription(description);
-    //         adminGroup.setRegDate(new Date());
+        try {
+            /* 그룹 등록 처리 START */
+            Group = new Group();
+            Group.setName(name);
+            Group.setDescription(description);
+            Group.setRegDate(new Date());
 
-    //         adminGroup = adminGroupRepository.save(adminGroup);
-    //         /* 그룹 등록 처리 END */
+            //Group = authGroupRepository.save(Group);
+            /* 그룹 등록 처리 END */
 
-    //         /* 그룹 권한 등록 처리 START */
-    //         this.adminGroupAuthChange(adminGroup.getAdminGroupSeq(), arrayAuth);
-    //         /* 그룹 권한 등록 처리 END */
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
+            /* 그룹 권한 등록 처리 START */
+            // this.adminGroupAuthChange(adminGroup.getAdminGroupSeq(), arrayAuth);
+            /* 그룹 권한 등록 처리 END */
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
-    //     return adminGroup;
-    // }
+        return Group;
+    }
 
     // @Transactional
     // public AdminGroup modify(Integer adminGroupSeq, String name, String description, String arrayAuth) {
