@@ -90,7 +90,7 @@ public class AuthGroupService {
             Group.setDescription(description);
             Group.setRegDate(new Date());
 
-            //Group = authGroupRepository.save(Group);
+            Group = authGroupRepository.save(Group);
             /* 그룹 등록 처리 END */
 
             /* 그룹 권한 등록 처리 START */
