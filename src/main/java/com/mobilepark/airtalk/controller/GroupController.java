@@ -23,7 +23,7 @@ import com.mobilepark.airtalk.util.DateUtil;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/group")
+@RequestMapping("/rest/group")
 public class GroupController {
     private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
 

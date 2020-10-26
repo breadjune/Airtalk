@@ -17,7 +17,7 @@ import org.json.simple.parser.ParseException;
 import org.json.simple.JSONArray; //JSON배열 사용
 
 @Controller
-@RequestMapping("/admin/member")
+@RequestMapping("/rest/member")
 public class MemberController {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);

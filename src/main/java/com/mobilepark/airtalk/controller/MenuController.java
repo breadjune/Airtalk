@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/admin/menu")
+@RequestMapping("/rest/menu")
 public class MenuController {
 
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);

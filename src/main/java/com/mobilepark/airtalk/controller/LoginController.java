@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/admin/auth")
+@RequestMapping("/rest/auth")
 public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);

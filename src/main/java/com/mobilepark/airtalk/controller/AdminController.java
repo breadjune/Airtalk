@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/admin/admin-list")
+@RequestMapping("/rest/admin-list")
 public class AdminController {
 
     @Autowired
