@@ -29,7 +29,7 @@ public class GroupController {
 
     @Autowired
     public AuthGroupService authGroupService;
-
+    Group Group = new Group();
     // 테스트 
     // @RequestMapping(value = "/search.json")
     // public @ResponseBody String searchData( Model model){
@@ -37,6 +37,9 @@ public class GroupController {
     //     return "test";
     // }
 
+     /****************************
+     --------- 그룹 조회 ---------
+     ****************************/
     @RequestMapping(value="/search.json" )
     public @ResponseBody String search (Model model, @RequestBody String form) {
         JSONArray req_array = new JSONArray();
@@ -61,11 +64,8 @@ public class GroupController {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-
         try {
             List<Group> authGroupList = authGroupService.search();
-            
             
             for(Group authGroup : authGroupList) {
                 if(searchWord.equals("") || searchWord.equals(authGroup.getName())){
@@ -87,16 +87,14 @@ public class GroupController {
 
         return data;
     }
-    //                            @RequestParam("name") String name,
-    //                            @RequestParam("description") String description,
-    //                            @RequestParam("arrayAuth") String auth
-     /**
-     * 그룹 생성
-     */
+    
+    /****************************
+     --------- 그룹 생성 ---------
+     ****************************/
     @RequestMapping(value="/create.json", method=RequestMethod.POST)
     @ResponseBody    // 중요하다
     public String create(@RequestBody String param) {
-        Group Group = new Group();
+            Group = new Group();
             System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
@@ -105,20 +103,21 @@ public class GroupController {
             JSONObject jObject = (JSONObject) parser.parse(param);
 
             System.out.println("파라미터 정보 JSON" + jObject.toString());
-            String id = (String)jObject.get("id"); 
+           
             String gname = (String)jObject.get("gname"); 
             String userGroup = (String)jObject.get("userGroup"); 
+            String auth = (String)jObject.get("auth"); 
             String regDate = (String)jObject.get("regDate"); 
-        
-            System.out.println("id: " + id);
+
             System.out.println("gname: " + gname);
             System.out.println("userGroup: " + userGroup);
+            System.out.println("auth: " + auth);
             System.out.println("regDate: " + regDate);
 
               //CREATE 정보 전달
             try {
                 Group = authGroupService.create(gname, userGroup, regDate);
-                 result = "SUCCESS";
+                result = "SUCCESS";
              } catch(Exception e) {
                 logger.error(e.getMessage());
                 result = "FAIL";
@@ -132,26 +131,84 @@ public class GroupController {
         return result;
     }
 
-    @RequestMapping(value = "/getGroupInfoBySeq.json")
-    public @ResponseBody String getGroupInfoBySeq(Model model, @RequestBody String form) {
+     /****************************
+     --------- 그룹 수정 ---------
+     ****************************/
+    @RequestMapping(value="/update.json", method=RequestMethod.POST)
+    @ResponseBody    // 중요하다
+    public String update(@RequestBody String param) {
+            Group = new Group();
+            System.out.println("파라미터 정보" + param);
+            String result = "";
+     //JSON파싱
+        try { 
+            JSONParser parser = new JSONParser();
+            JSONObject jObject = (JSONObject) parser.parse(param);
 
-        logger.info("getGroupInfoBySeq");
-        String data = "";
-        
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("adminId", "kas0610");
-            jsonObject.put("adminName", "한재선");
-            jsonObject.put("phone", "01012341234");
-            jsonObject.put("email", "kas0610@mail.com");
-            
-            data = jsonObject.toJSONString();
+            System.out.println("파라미터 정보 JSON" + jObject.toString());
+           
+            String authGroupSeq = (String)jObject.get("authGroupSeq"); 
+            String gname = (String)jObject.get("gname"); 
+            String userGroup = (String)jObject.get("userGroup"); 
+            String auth = (String)jObject.get("auth"); 
 
-            logger.info("data" + data);
+            System.out.println("authGroupSeq: " + authGroupSeq);
+            System.out.println("gname: " + gname);
+            System.out.println("userGroup: " + userGroup);
+            System.out.println("auth: " + auth);
 
-        
+              //UPDATE 정보 전달
+            try {
+                Group = authGroupService.update(Integer.parseInt(authGroupSeq),gname, userGroup ,auth);
+                result = "SUCCESS";
+             } catch(Exception e) {
+                logger.error(e.getMessage());
+                result = "FAIL";
+            }
 
-        return data;
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
+     /****************************
+     --------- 그룹 삭제 ---------
+     ****************************/
+    @RequestMapping(value="/remove.json", method=RequestMethod.POST)
+    @ResponseBody    // 중요하다
+    public String remove(@RequestBody String param) {
+            Group = new Group();
+            System.out.println("파라미터 정보" + param);
+            String result = "";
+     //JSON파싱
+        try { 
+            JSONParser parser = new JSONParser();
+            JSONObject jObject = (JSONObject) parser.parse(param);
+
+            System.out.println("파라미터 정보 JSON" + jObject.toString());
+           
+            String authGroupSeq = (String)jObject.get("authGroupSeq"); 
+
+            System.out.println("authGroupSeq: " + authGroupSeq);
+
+              //DELETE 정보 전달
+            try {
+                authGroupService.remove(Integer.parseInt(authGroupSeq));
+                result = "SUCCESS";
+             } catch(Exception e) {
+                logger.error(e.getMessage());
+                result = "FAIL";
+            }
+
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
 }

@@ -81,7 +81,7 @@ public class AuthGroupService {
     public Group create(String name, String description, String arrayAuth) {
         Group Group = null;
         // AuthGroup AuthGroup = null;
-        JSONObject jsonObject = null;
+        // JSONObject jsonObject = null;
 
         try {
             /* 그룹 등록 처리 START */
@@ -103,51 +103,57 @@ public class AuthGroupService {
         return Group;
     }
 
-    // @Transactional
-    // public AdminGroup modify(Integer adminGroupSeq, String name, String description, String arrayAuth) {
-    //     AdminGroup adminGroup = null;
-    //     AdminGroupAuth adminGroupAuth = null;
-    //     JSONObject jsonObject = null;
+    @Transactional
+    public Group update(int authGroupSeq, String name, String description, String arrayAuth) {
+        Group Group = null;
+        // GroupAuth adminGroupAuth = null;
+        // JSONObject jsonObject = null;
+        
+        System.out.println("authGroupSeq: " + authGroupSeq);
+        System.out.println("gname: " + name);
+        System.out.println("userGroup: " + description);
+        System.out.println("auth: " + arrayAuth);
 
-    //     try {
-    //         /* 그룹 등록 처리 START */
-    //         adminGroup = new AdminGroup();
-    //         adminGroup.setAdminGroupSeq(adminGroupSeq);
-    //         adminGroup.setName(name);
-    //         adminGroup.setDescription(description);
-    //         adminGroup.setModDate(new Date());
+        try {
+            /* 그룹 등록 처리 START */
+            Group = new Group();
+            Group.setAuthGroupSeq(authGroupSeq);
+            Group.setName(name);
+            Group.setDescription(description);
+            Group.setModDate(new Date());
 
-    //         adminGroup = adminGroupRepository.save(adminGroup);
-    //         /* 그룹 등록 처리 END */
+            Group = authGroupRepository.save(Group);
+            /* 그룹 등록 처리 END */
 
-    //         /* 그룹 권한 등록 처리 START */
-    //         this.adminGroupAuthChange(adminGroup.getAdminGroupSeq(), arrayAuth);
-    //         /* 그룹 권한 등록 처리 END */
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
+            /* 그룹 권한 등록 처리 START */
+            // this.adminGroupAuthChange(Group.getAdminGroupSeq(), arrayAuth);
+            /* 그룹 권한 등록 처리 END */
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 
-    //     return adminGroup;
-    // }
+        return Group;
+    }
 
-    // @Transactional
-    // public void remove(int adminGroupSeq) {
-    //     AdminGroup adminGroup = null;
-    //     AdminGroupAuth adminGroupAuth = null;
-    //     JSONObject jsonObject = null;
+    @Transactional
+    public void remove(int authGroupSeq) {
+        Group Group = null;
+        // AdminGroupAuth adminGroupAuth = null;
+        // JSONObject jsonObject = null;
+        
+        System.out.println("번호 : " + authGroupSeq);
+        try {
+            /* 그룹 권한 삭제 처리 START */
+            // adminGroupAuthRepository.deleteAllByAdminGroupSeqEquals(authGroupSeq);
+            /* 그룹 권한 삭제 처리 END */
 
-    //     try {
-    //         /* 그룹 권한 삭제 처리 START */
-    //         adminGroupAuthRepository.deleteAllByAdminGroupSeqEquals(adminGroupSeq);
-    //         /* 그룹 권한 삭제 처리 END */
-
-    //         /* 그룹 삭제 처리 START */
-    //         adminGroupRepository.deleteById(adminGroupSeq);
-    //         /* 그룹 삭제 처리 END */
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
-    // }
+            /* 그룹 삭제 처리 START */
+            authGroupRepository.deleteById(authGroupSeq);
+            /* 그룹 삭제 처리 END */
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
 
     // public List<AdminGroupAuth> getMenuAuthList(int adminGroupSeq) {
     //     List<AdminGroupAuth> adminGroupAuthList = new ArrayList<>();
