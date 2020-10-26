@@ -2,13 +2,12 @@ package com.mobilepark.airtalk.data;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+// import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter @Setter
@@ -32,4 +31,21 @@ public class Admin extends BaseSerializable {
 
     @Column(name="ADMIN_GROUP_SEQ")
     private int adminGroupSeq;
+
+    @Column(name="PHONE")
+    private String phone;
+
+    @Column(name="MCODE")
+    private String mcode;
+
+    @Column(name="EMAIL")
+    private String email;
+
+    //@MapsId(value = "adminGroupSeq")
+    @ManyToOne(targetEntity = AdminGroup.class)
+    @JoinColumn(name="ADMIN_GROUP_SEQ", insertable = false, updatable = false)
+    private AdminGroup adminGroup;
+
+    @Transient
+    private String roleName;
 }
