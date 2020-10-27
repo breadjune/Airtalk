@@ -26,3 +26,5 @@ src/main/webapp/
 *.class
 access_log.*
 static/
+bin/
+build/
