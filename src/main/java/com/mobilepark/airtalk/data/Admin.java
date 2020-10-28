@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.persistence.*;
 // import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,7 +32,7 @@ public class Admin extends BaseSerializable {
     @Column(name="PASSWORD_UPDATE_DATE")
     private Date passwordUpdateDate;
 
-    @Column(name="ADMIN_GROUP_SEQ")
+    @Column(name="AUTH_GROUP_SEQ")
     private int adminGroupSeq;
 
     @Column(name="PHONE")
@@ -42,9 +45,10 @@ public class Admin extends BaseSerializable {
     private String email;
 
     //@MapsId(value = "adminGroupSeq")
-    @ManyToOne(targetEntity = AdminGroup.class)
-    @JoinColumn(name="ADMIN_GROUP_SEQ", insertable = false, updatable = false)
-    private AdminGroup adminGroup;
+    @OneToOne(targetEntity = Group.class)
+    @JoinColumn(name="AUTH_GROUP_SEQ", insertable = false, updatable = false)
+    @NotFound(action=NotFoundAction.IGNORE)
+    private Group adminGroup;
 
     @Transient
     private String roleName;
