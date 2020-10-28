@@ -45,10 +45,10 @@ public class Admin extends BaseSerializable {
     private String email;
 
     //@MapsId(value = "adminGroupSeq")
-    @OneToOne(targetEntity = Group.class)
+    @OneToOne(targetEntity = AuthGroup.class)
     @JoinColumn(name="AUTH_GROUP_SEQ", insertable = false, updatable = false)
     @NotFound(action=NotFoundAction.IGNORE)
-    private Group adminGroup;
+    private AuthGroup adminGroup;
 
     @Transient
     private String roleName;

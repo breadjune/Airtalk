@@ -1,6 +1,6 @@
 package com.mobilepark.airtalk.service;
 
-import com.mobilepark.airtalk.data.Group;
+import com.mobilepark.airtalk.data.AuthGroup;
 // import com.mobilepark.airtalk.data.Auth;
 import com.mobilepark.airtalk.data.Menu;
 import com.mobilepark.airtalk.repository.AuthGroupRepository;
@@ -33,8 +33,8 @@ public class AuthGroupService {
     @Autowired
     MenuService menuService;
 
-    public List<Group> search(){
-        List<Group> list = new ArrayList<>();
+    public List<AuthGroup> search(){
+        List<AuthGroup> list = new ArrayList<>();
 
         try {
             list = authGroupRepository.findAll();
@@ -78,19 +78,19 @@ public class AuthGroupService {
     // }
 
     @Transactional
-    public Group create(String name, String description, String arrayAuth) {
-        Group Group = null;
+    public AuthGroup create(String name, String description, String arrayAuth) {
+        AuthGroup AuthGroup = null;
         // AuthGroup AuthGroup = null;
         // JSONObject jsonObject = null;
 
         try {
             /* 그룹 등록 처리 START */
-            Group = new Group();
-            Group.setName(name);
-            Group.setDescription(description);
-            Group.setRegDate(new Date());
+            AuthGroup = new AuthGroup();
+            AuthGroup.setName(name);
+            AuthGroup.setDescription(description);
+            AuthGroup.setRegDate(new Date());
 
-            Group = authGroupRepository.save(Group);
+            AuthGroup = authGroupRepository.save(AuthGroup);
             /* 그룹 등록 처리 END */
 
             /* 그룹 권한 등록 처리 START */
@@ -100,12 +100,12 @@ public class AuthGroupService {
             logger.error(e.getMessage());
         }
 
-        return Group;
+        return AuthGroup;
     }
 
     @Transactional
-    public Group update(int authGroupSeq, String name, String description, String arrayAuth) {
-        Group Group = null;
+    public AuthGroup update(int authGroupSeq, String name, String description, String arrayAuth) {
+        AuthGroup AuthGroup = null;
         // GroupAuth adminGroupAuth = null;
         // JSONObject jsonObject = null;
         
@@ -116,13 +116,13 @@ public class AuthGroupService {
 
         try {
             /* 그룹 등록 처리 START */
-            Group = new Group();
-            Group.setAuthGroupSeq(authGroupSeq);
-            Group.setName(name);
-            Group.setDescription(description);
-            Group.setModDate(new Date());
+            AuthGroup = new AuthGroup();
+            AuthGroup.setAuthGroupSeq(authGroupSeq);
+            AuthGroup.setName(name);
+            AuthGroup.setDescription(description);
+            AuthGroup.setModDate(new Date());
 
-            Group = authGroupRepository.save(Group);
+            AuthGroup = authGroupRepository.save(AuthGroup);
             /* 그룹 등록 처리 END */
 
             /* 그룹 권한 등록 처리 START */
@@ -132,12 +132,11 @@ public class AuthGroupService {
             logger.error(e.getMessage());
         }
 
-        return Group;
+        return AuthGroup;
     }
 
     @Transactional
     public void remove(int authGroupSeq) {
-        Group Group = null;
         // AdminGroupAuth adminGroupAuth = null;
         // JSONObject jsonObject = null;
         
