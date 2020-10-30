@@ -3,19 +3,17 @@ package com.mobilepark.airtalk.data;
 import java.util.Date;
 
 import javax.persistence.*;
-// import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Getter @Setter
 @Table(name="TBL_ADMIN")
-public class Admin extends BaseSerializable {
+public class Admin {
     
     private static final long serialVersionUID = -2382480158604649420L;
 
@@ -43,6 +41,12 @@ public class Admin extends BaseSerializable {
 
     @Column(name="EMAIL")
     private String email;
+
+    @Column(name="REG_DATE")
+    private String regDate;
+
+    @Column(name="MOD_DATE")
+    private String modDate;
 
     //@MapsId(value = "adminGroupSeq")
     @OneToOne(targetEntity = AuthGroup.class)
