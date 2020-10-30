@@ -1,20 +1,18 @@
 package com.mobilepark.airtalk.controller;
 
 import com.mobilepark.airtalk.data.AuthGroup;
+import com.mobilepark.airtalk.data.Menu;
 import com.mobilepark.airtalk.service.AuthGroupService;
+import com.mobilepark.airtalk.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -29,7 +27,12 @@ public class GroupController {
 
     @Autowired
     public AuthGroupService authGroupService;
+   
+    @Autowired
+    public MenuService menuService;
+
     AuthGroup AuthGroup = new AuthGroup();
+    
     // 테스트 
     // @RequestMapping(value = "/search.json")
     // public @ResponseBody String searchData( Model model){
@@ -40,6 +43,7 @@ public class GroupController {
      /****************************
      --------- 그룹 조회 ---------
      ****************************/
+    @SuppressWarnings("unchecked")
     @RequestMapping(value="/search.json" )
     public @ResponseBody String search (Model model, @RequestBody String form) {
         JSONArray req_array = new JSONArray();
@@ -71,8 +75,8 @@ public class GroupController {
                 if(searchWord.equals("") || searchWord.equals(authGroup.getName())){
                   JSONObject jsonObject = new JSONObject();
                   jsonObject.put("authGroupSeq",authGroup.getAuthGroupSeq().toString());
-                  jsonObject.put("authName",authGroup.getName());
-                  jsonObject.put("desc",authGroup.getDescription());
+                  jsonObject.put("name",authGroup.getName());
+                  jsonObject.put("description",authGroup.getDescription());
                   jsonObject.put("regDate",DateUtil.dateToString(authGroup.getRegDate(), "yyyy-MM-dd HH:MM"));
                
                   req_array.add(jsonObject);
@@ -88,6 +92,38 @@ public class GroupController {
         return data;
     }
     
+    /****************************
+     --------- 그룹 생성 화면 ----- 
+     ****************************/
+    @RequestMapping(value="/create", method=RequestMethod.GET)
+    @ResponseBody
+    public String create() {
+        List<Menu> menuAuthList = null;
+        String data = "";
+        JSONArray req_array = new JSONArray();
+        
+        try {
+            menuAuthList = menuService.getMenu();
+            
+            for(Menu menu : menuAuthList) {
+                  JSONObject jsonObject = new JSONObject();
+                  jsonObject.put("menuSeq",menu.getMenuSeq().toString());
+                  jsonObject.put("title",menu.getTitle());
+              
+                  req_array.add(jsonObject);
+
+            }
+            data = req_array.toString();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        logger.info(data);
+       
+        return data;
+    }
+
+
     /****************************
      --------- 그룹 생성 ---------
      ****************************/

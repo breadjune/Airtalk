@@ -5,9 +5,6 @@ import com.mobilepark.airtalk.data.AuthGroup;
 import com.mobilepark.airtalk.data.Menu;
 import com.mobilepark.airtalk.repository.AuthGroupRepository;
 // import com.mobilepark.airtalk.repository.AuthRepository;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,21 +45,6 @@ public class AuthGroupService {
     // public Group findByAuthGroupSeq(int authGroupSeq){
     //     Group authGroup = authGroupRepository.nativeFindByAdminGroupSeq(adminGroupSeq);
     //     return authGroup;
-    // }
-
-    // public AdminGroup view(int adminGroupSeq) {
-    //     try {
-    //         Optional<AdminGroup> optionalAdminGroup = adminGroupRepository.findById(adminGroupSeq);
-
-    //         if (!optionalAdminGroup.isPresent()) {
-    //             return null;
-    //         }
-
-    //         return optionalAdminGroup.get();
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //         return null;
-    //     }
     // }
 
     // public List<AdminGroupAuth> searchAdminGroupAuth(int adminGroupSeq) {
