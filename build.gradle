@@ -44,6 +44,9 @@ dependencies {
     compile 'mysql:mysql-connector-java'
 	compile 'org.apache.poi:poi:3.9'
 	compile 'org.apache.poi:poi-ooxml:3.17'
+	compile 'io.jsonwebtoken:jjwt-api:0.10.5'
+	runtime 'io.jsonwebtoken:jjwt-impl:0.10.5'
+	runtime 'io.jsonwebtoken:jjwt-jackson:0.10.5'
 
 	compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.12'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
