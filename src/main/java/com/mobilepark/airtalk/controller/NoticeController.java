@@ -1,0 +1,44 @@
+package com.mobilepark.airtalk.controller;
+
+import java.util.List;
+
+import com.mobilepark.airtalk.data.Notice;
+import com.mobilepark.airtalk.service.NoticeService;
+import com.mobilepark.airtalk.util.StringUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@RequestMapping("/rest/notice")
+public class NoticeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(NoticeController.class);
+
+    @Autowired
+    public NoticeService noticeService;
+
+
+    @RequestMapping(value = "/list",method = RequestMethod.GET)
+    @ResponseBody
+    public List<Notice> List(@RequestParam(value="type", required = false) String type, @RequestParam(value="search", required = false) String search){
+        System.out.println("Notice_List_api");
+        System.out.println("search : " + search + " / type : " + type);
+        if(StringUtils.isEmpty(search) || StringUtils.isEmpty(type)){
+            System.out.println("search : '', type : ''");
+            List<Notice> a = noticeService.getAllList();
+            System.out.println("aaaaaaaaa");
+            return a;
+        }else{
+            System.out.println("else");
+            return null;
+        }
+    }
+}
