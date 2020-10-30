@@ -24,6 +24,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         String uri = request.getRequestURI();
 
+        
+
         //HttpSession httpSession = request.getSession(true);
 
         // List<AdminGroupAuth> adminGroupAuthList = (List)httpSession.getAttribute(SessionAttrName.ADMIN_GROUP_AUTH.toString());
