@@ -1,13 +1,14 @@
 package com.mobilepark.airtalk.controller;
 
 import com.mobilepark.airtalk.data.Admin;
-import com.mobilepark.airtalk.service.AdminService;
 import com.mobilepark.airtalk.service.LoginService;
 
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -30,7 +30,7 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, String> login(@RequestBody JSONObject form) {
+    public Map<String, String> login(@RequestBody JSONObject form, HttpServletResponse res) throws Exception {
         
         Map<String, String> map = new HashMap<>();
         
@@ -46,22 +46,19 @@ public class LoginController {
         
         //logger.info("admin data : " + admin.getAdminId());
 
-        String errorCode = "";
+        String token = loginService.create(admin.getAdminName(), admin.getAdminId());
+        loginService.tokenReader(token);
 
-        if (admin != null) {
-            map.put("name", admin.getAdminName());
-            map.put("adminGroupSeq", String.valueOf(admin.getAdminGroupSeq()));
-            map.put("errorCode", errorCode);
-            errorCode = "0";
-        } else {
-            errorCode = "-1";
-        }
+        logger.info("token : " + token);
+
+        res.setHeader("Authorization", token);
+
+        map.put("name", admin.getAdminName());
+        map.put("adminGroupSeq", String.valueOf(admin.getAdminGroupSeq()));
+        map.put("errorCode", "0");
 
         return map;
 
     }
-
-
-
-
+    
 }
