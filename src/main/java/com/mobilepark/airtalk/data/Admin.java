@@ -30,7 +30,7 @@ public class Admin extends BaseSerializable {
     @Column(name="PASSWORD_UPDATE_DATE")
     private Date passwordUpdateDate;
 
-    @Column(name="AUTH_GROUP_SEQ")
+    @Column(name="ADMIN_GROUP_SEQ")
     private int adminGroupSeq;
 
     @Column(name="PHONE")
@@ -42,11 +42,10 @@ public class Admin extends BaseSerializable {
     @Column(name="EMAIL")
     private String email;
 
-    //@MapsId(value = "adminGroupSeq")
-    @OneToOne(targetEntity = AuthGroup.class)
-    @JoinColumn(name="AUTH_GROUP_SEQ", insertable = false, updatable = false)
+    @OneToOne(targetEntity = AdminGroup.class)
+    @JoinColumn(name="ADMIN_GROUP_SEQ", insertable = false, updatable = false)
     @NotFound(action=NotFoundAction.IGNORE)
-    private AuthGroup adminGroup;
+    private AdminGroup adminGroup;
 
     @Transient
     private String roleName;

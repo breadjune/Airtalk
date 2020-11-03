@@ -1,11 +1,8 @@
 package com.mobilepark.airtalk.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +20,7 @@ public class AdminService {
     @Autowired
     public AdminRepository adminRepository;
 
+    // 계정 관리 리스트
     public List<Admin> getAdminList() {
         List<Admin> adminList = new ArrayList<>();
         
@@ -32,6 +30,7 @@ public class AdminService {
         return adminList;
     }
 
+    // 상세 페이지 정보 조회
     public Admin getAdminInfo(String adminId) {
         Admin adminInfo = new Admin();
 
@@ -40,6 +39,7 @@ public class AdminService {
         return adminInfo;
     }
 
+    // 계정 정보 수정
     public String updateAdminInfo(Admin admin) {
         String result = "SUCCESS";
 
@@ -64,6 +64,39 @@ public class AdminService {
             return result;
         }
 
+        return result;
+    }
+
+    // 계정 생성
+    public String createAdmin(Admin admin) {
+        String result = "SUCCESS";
+
+        try {
+            admin.setRegDate(new Date());
+            admin.setPasswordUpdateDate(new Date());
+            adminRepository.save(admin);
+        }
+        catch (Exception e) {
+            logger.info("Error : " + e);
+            result = "FAIL";
+            return result;
+        }
+
+        return result;
+    }
+
+    // 계정 삭제
+    public String deleteAdmin(String adminId) {
+        String result = "SUCCESS";
+
+        try {
+            adminRepository.deleteById(adminId);
+        }
+        catch (Exception e) {
+            logger.info("Error : " + e);
+            result = "FAIL";
+            return result;
+        }
         return result;
     }
 }

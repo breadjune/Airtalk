@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
-@ToString(exclude = {"adminList", "adminGroupAuthList"})
+// @ToString(exclude = {"adminList", "adminGroupAuthList"})
 @Table(name="TBL_ADMIN_GROUP")
 public class AdminGroup {
 
@@ -33,9 +33,9 @@ public class AdminGroup {
     @Column(name="MOD_DATE", columnDefinition = "DATETIME")
     private Date modDate;
 
-    @OneToMany(mappedBy = "adminGroup", /*fetch = FetchType.EAGER,*/ cascade = CascadeType.REMOVE)
-    private List<Admin> adminList;
+    // @OneToMany(mappedBy = "adminGroup", /*fetch = FetchType.EAGER,*/ cascade = CascadeType.REMOVE)
+    // private List<Admin> adminList;
 
-    @OneToMany(mappedBy = "adminGroup", /*fetch = FetchType.EAGER,*/ cascade = CascadeType.REMOVE)
-    private List<AdminGroupAuth> adminGroupAuthList;
+    // @OneToMany(mappedBy = "adminGroup", /*fetch = FetchType.EAGER,*/ cascade = CascadeType.REMOVE)
+    // private List<AdminGroupAuth> adminGroupAuthList;
 }
