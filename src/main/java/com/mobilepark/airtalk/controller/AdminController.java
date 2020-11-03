@@ -10,6 +10,7 @@ import com.mobilepark.airtalk.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -28,11 +29,27 @@ public class AdminController {
         return adminList;
     }
 
-    @GetMapping(value = "/adminViewSearch")
+    @GetMapping(value = "/getAdminInfo")
     @ResponseBody
-    public List<Admin> adminViewSearch(HttpServletRequest req) {
-        List<Admin> adminList = adminService.getAdminInfo();
+    public Admin getAdminInfo(HttpServletRequest req) {
+        String adminId = req.getQueryString().substring(8, req.getQueryString().length());
 
-        return adminList;
+        Admin adminInfo = adminService.getAdminInfo(adminId);
+        
+        return adminInfo;
+    }
+
+    @PostMapping(value = "/updateAdminInfo")
+    @ResponseBody
+    public String updateAdminInfo(Admin admin) {
+
+        System.out.println("getAdminGroupSeq : " + admin.getAdminGroupSeq());
+        System.out.println("getPhone : " + admin.getPhone());
+        System.out.println("getEmail : " + admin.getEmail());
+        System.out.println("getPassword : " + admin.getPassword());
+
+        String result = adminService.updateAdminInfo(admin);
+
+        return result;
     }
 }

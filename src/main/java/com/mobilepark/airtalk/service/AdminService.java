@@ -3,7 +3,9 @@ package com.mobilepark.airtalk.service;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,43 +28,42 @@ public class AdminService {
         
         adminList = adminRepository.findAll();
 
-        int i = 0;
-        // regDate format 변경
-        for (Admin task : adminList) {
-            String getReqDate = task.getRegDate();
-            task.setRegDate(getReqDate.substring(0, 10));
-            adminList.set(i, task);
-
-            if(task.getModDate() != null) {
-                String getModDate = task.getModDate();
-                task.setModDate(getModDate.substring(0, 10));
-                adminList.set(i, task);
-            }
-
-            i++;
-        }
 
         return adminList;
     }
 
-    public List<Admin> getAdminInfo() {
-        List<Admin> adminInfo = new ArrayList<>();
+    public Admin getAdminInfo(String adminId) {
+        Admin adminInfo = new Admin();
 
-        int i = 0;
-        for (Admin task : adminInfo) {
-            String getReqDate = task.getRegDate();
-            task.setRegDate(getReqDate.substring(0, 10));
-            adminInfo.set(i, task);
-            
-            if(task.getModDate() != null) {
-                String getModDate = task.getModDate();
-                task.setModDate(getModDate.substring(0, 10));
-                adminInfo.set(i, task);
-            }
-
-            i++;
-        }
+        adminInfo = adminRepository.findByAdminId(adminId);
 
         return adminInfo;
+    }
+
+    public String updateAdminInfo(Admin admin) {
+        String result = "SUCCESS";
+
+        try {
+            Admin newAdminInfo = adminRepository.findByAdminId(admin.getAdminId());
+
+            newAdminInfo.setAdminId(admin.getAdminId());
+            newAdminInfo.setAdminName(newAdminInfo.getAdminName());
+            newAdminInfo.setAdminGroupSeq(admin.getAdminGroupSeq());
+            newAdminInfo.setPassword(admin.getPassword());
+            newAdminInfo.setPasswordUpdateDate(new Date());
+            newAdminInfo.setModDate(new Date());
+            newAdminInfo.setPhone(admin.getPhone());
+            newAdminInfo.setEmail(admin.getEmail());
+            newAdminInfo.setRegDate(newAdminInfo.getRegDate());
+
+            adminRepository.save(newAdminInfo);
+        }
+        catch (Exception e) {
+            logger.info("Error : " + e);
+            result = "FAIL";
+            return result;
+        }
+
+        return result;
     }
 }

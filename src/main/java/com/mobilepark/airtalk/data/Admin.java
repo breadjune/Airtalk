@@ -13,10 +13,10 @@ import lombok.Setter;
 @Entity
 @Getter @Setter
 @Table(name="TBL_ADMIN")
-public class Admin {
-    
-    private static final long serialVersionUID = -2382480158604649420L;
+public class Admin extends BaseSerializable {
 
+    private static final long serialVersionUID = -2382480158604649420L;
+    
     @Id
     @Column(name="ADMIN_ID")
     private String adminId;
@@ -41,12 +41,6 @@ public class Admin {
 
     @Column(name="EMAIL")
     private String email;
-
-    @Column(name="REG_DATE")
-    private String regDate;
-
-    @Column(name="MOD_DATE")
-    private String modDate;
 
     //@MapsId(value = "adminGroupSeq")
     @OneToOne(targetEntity = Group.class)
