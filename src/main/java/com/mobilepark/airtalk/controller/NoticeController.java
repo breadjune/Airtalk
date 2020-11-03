@@ -41,4 +41,11 @@ public class NoticeController {
             return null;
         }
     }
+    @RequestMapping(value = "/getnotice", method = RequestMethod.GET)
+    @ResponseBody
+    public Notice getNotice(@RequestParam(value="seq") String seq){
+        int id = Integer.parseInt(seq);
+        System.out.println("Notice_getNotice() id : " + id);
+        return noticeService.getNotice(id);
+    }
 }

@@ -21,4 +21,9 @@ public class NoticeService {
         System.out.println(" NoticeService - getAllList()");
         return noticeRepository.findAll();
     }
+    
+    public Notice getNotice(int id){
+        System.out.println("NoticeService - getNotice()");
+        return noticeRepository.findByBoardSeq(id);
+    }
 }
