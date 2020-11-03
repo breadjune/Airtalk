@@ -46,11 +46,9 @@ public class LoginController {
         
         //logger.info("admin data : " + admin.getAdminId());
 
-        String token = loginService.create(admin.getAdminName(), admin.getAdminId());
-        loginService.tokenReader(token);
+        String token = loginService.createToken(admin.getAdminName(), admin.getAdminId());
 
         logger.info("token : " + token);
-
         res.setHeader("Authorization", token);
 
         map.put("name", admin.getAdminName());

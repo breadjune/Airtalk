@@ -21,7 +21,7 @@ import java.util.*;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private static final String ADMIN_LOGIN = "/rest/login";
+    private static final String ADMIN_LOGIN = "/rest/auth/login";
     private static final String DIRECTORY_ADMIN_ALL = "/rest/**";
 
     // private Environment env;
@@ -35,11 +35,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthenticationInterceptor())
                 .addPathPatterns(DIRECTORY_ADMIN_ALL)
-                .excludePathPatterns("/rest/home")         //홈 페이지 예외 처리
-                .excludePathPatterns("/rest/dashboard")    //대쉬보드 페이지 예외 처리
-                .excludePathPatterns("/rest/menu")         //메뉴 페이지 예외 처리
+                // .excludePathPatterns("/rest/home")         //홈 페이지 예외 처리
+                // .excludePathPatterns("/rest/dashboard")    //대쉬보드 페이지 예외 처리
+                // .excludePathPatterns("/rest/menu")         //메뉴 페이지 예외 처리
                 .excludePathPatterns(ADMIN_LOGIN)        //로그인 페이지 예외 처리
-                .excludePathPatterns("/rest/images/*")     //이미지 디렉토리 예외 처리
+                // .excludePathPatterns("/rest/images/*")     //이미지 디렉토리 예외 처리
         ;
 
         // registry.addInterceptor(new HistoryInterceptor(historyService))
