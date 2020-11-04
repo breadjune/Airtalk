@@ -46,10 +46,10 @@ public class LoginController {
         
         //logger.info("admin data : " + admin.getAdminId());
 
-        String token = loginService.createToken(admin.getAdminName(), admin.getAdminId());
+        String token = loginService.create(admin.getAdminName(), admin.getAdminId());
 
         logger.info("token : " + token);
-        res.setHeader("Authorization", token);
+        res.setHeader("authorization", token);
 
         map.put("name", admin.getAdminName());
         map.put("adminGroupSeq", String.valueOf(admin.getAdminGroupSeq()));
@@ -59,4 +59,12 @@ public class LoginController {
 
     }
     
+    @RequestMapping("/expire")
+    public String expire() {
+    // ModelAndView view = new ModelAndView();
+    System.out.println(">>>>>>>>>>>>>>>login page invoked!!!!!!!");
+
+    return "/login";
+
+  }
 }

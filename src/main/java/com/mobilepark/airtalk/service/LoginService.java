@@ -43,8 +43,14 @@ public class LoginService {
         return adminRepository.findByAdminIdAndPassword(email, pw);
     }
 
-    public String createToken(String name, String uid) throws Exception {
-        return tokenProvider.create(name, uid);
+    public String create(String name, String uid) throws Exception {
+        String token = tokenProvider.createToken(name, uid);
+        // tokenProvider.tokenReader(token);
+        return token;
+    }
+
+    public Boolean validation(String token) throws Exception {
+        return tokenProvider.validationToken(token);
     }
 
     // public Key JWTAlgorithm() {

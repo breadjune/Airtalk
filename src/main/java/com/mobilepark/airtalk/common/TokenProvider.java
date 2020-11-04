@@ -9,7 +9,9 @@ import java.util.Date;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -25,9 +27,19 @@ public class TokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
     // properties에서 비밀키 가지고 옴
-    @Value("${spring.jwt.token.secret-key}") String secretKey;
+    // @Value("${spring.jwt.token.secret-key}") String secretKey;
+
+    // private Environment env;
+
+    // @Autowired
+    // public TokenProvider(Environment env) {
+    //     this.env = env;
+    // }
+
+    private String secretKey = "AiraTalkVueBootstrapDashboardSpringbootSequrityJsonWebTokenSecretKeyProvider";
 
     public Key JWTAlgorithm() {
+        // String secretKey = env.getProperty("spring.jwt.token.secret-key");
         // 비밀키 binary 형식으로 변환
         byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
         // 알고리즘 지정(SHA256)
@@ -39,7 +51,9 @@ public class TokenProvider {
     }
 
     // 토큰 생성
-    public String create(String name, String id) throws Exception {
+    public String createToken(String name, String id) throws Exception {
+
+        // String secretKey = env.getProperty("spring.jwt.token.secret-key");
 
         logger.info("secretKey : " + secretKey);
         logger.info("validation : " + System.currentTimeMillis());
@@ -93,7 +107,8 @@ public class TokenProvider {
         try {
             if (token != null) {
                 Key SHAkey = JWTAlgorithm();
-                Date exp = Jwts.parser().setSigningKey(SHAkey).parseClaimsJws(token).getBody().getExpiration();
+                Date exp = Jwts.parser().setSigningKey(SHAkey).parseClaimsJws(token).getBody().getExpiration();;
+                logger.info("exp : " + exp);
                 return dateCompare(exp);
             }
         } catch(Exception e) {
@@ -106,10 +121,18 @@ public class TokenProvider {
     //exp 날짜 비교
     public Boolean dateCompare(Date exp) {
     
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+
         boolean result = false;
         Date nowDate = new Date();
+
+        logger.info("현재시간 : " + df.format(nowDate));
+        logger.info("만료시간 : " + df.format(exp));
+
         int compare = nowDate.compareTo(exp);
-        if (compare < 0) result = true;
+        if (compare < 0) {
+            result = true;
+        }
         return result;
     }
 }
