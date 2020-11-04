@@ -1,6 +1,6 @@
 package com.mobilepark.airtalk.controller;
 
-import com.mobilepark.airtalk.data.AuthGroup;
+import com.mobilepark.airtalk.data.AdminGroup;
 import com.mobilepark.airtalk.data.Menu;
 import com.mobilepark.airtalk.service.AuthGroupService;
 import com.mobilepark.airtalk.service.MenuService;
@@ -31,7 +31,7 @@ public class GroupController {
     @Autowired
     public MenuService menuService;
 
-    AuthGroup AuthGroup = new AuthGroup();
+    AdminGroup AdminGroup = new AdminGroup();
     
     // 테스트 
     // @RequestMapping(value = "/search.json")
@@ -69,12 +69,12 @@ public class GroupController {
             e.printStackTrace();
         }
         try {
-            List<AuthGroup> authGroupList = authGroupService.search();
+            List<AdminGroup> authGroupList = authGroupService.search();
             
-            for(AuthGroup authGroup : authGroupList) {
+            for(AdminGroup authGroup : authGroupList) {
                 if(searchWord.equals("") || searchWord.equals(authGroup.getName())){
                   JSONObject jsonObject = new JSONObject();
-                  jsonObject.put("authGroupSeq",authGroup.getAuthGroupSeq().toString());
+                  jsonObject.put("authGroupSeq",authGroup.getAdminGroupSeq().toString());
                   jsonObject.put("name",authGroup.getName());
                   jsonObject.put("description",authGroup.getDescription());
                   jsonObject.put("regDate",DateUtil.dateToString(authGroup.getRegDate(), "yyyy-MM-dd HH:MM"));
@@ -130,7 +130,7 @@ public class GroupController {
     @RequestMapping(value="/create.json", method=RequestMethod.POST)
     @ResponseBody    // 중요하다
     public String create(@RequestBody String param) {
-        AuthGroup = new AuthGroup();
+        AdminGroup = new AdminGroup();
             System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
@@ -152,7 +152,7 @@ public class GroupController {
 
               //CREATE 정보 전달
             try {
-                AuthGroup = authGroupService.create(gname, userGroup, regDate);
+                AdminGroup = authGroupService.create(gname, userGroup, regDate);
                 result = "SUCCESS";
              } catch(Exception e) {
                 logger.error(e.getMessage());
@@ -173,7 +173,7 @@ public class GroupController {
     @RequestMapping(value="/update.json", method=RequestMethod.POST)
     @ResponseBody    // 중요하다
     public String update(@RequestBody String param) {
-        AuthGroup = new AuthGroup();
+        AdminGroup = new AdminGroup();
             System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
@@ -195,7 +195,7 @@ public class GroupController {
 
               //UPDATE 정보 전달
             try {
-                AuthGroup = authGroupService.update(Integer.parseInt(authGroupSeq),gname, userGroup ,auth);
+                AdminGroup = authGroupService.update(Integer.parseInt(authGroupSeq),gname, userGroup ,auth);
                 result = "SUCCESS";
              } catch(Exception e) {
                 logger.error(e.getMessage());
@@ -216,7 +216,7 @@ public class GroupController {
     @RequestMapping(value="/remove.json", method=RequestMethod.POST)
     @ResponseBody    // 중요하다
     public String remove(@RequestBody String param) {
-        AuthGroup = new AuthGroup();
+        AdminGroup = new AdminGroup();
             System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
