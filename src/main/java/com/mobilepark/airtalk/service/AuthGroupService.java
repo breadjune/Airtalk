@@ -4,7 +4,7 @@ import com.mobilepark.airtalk.data.AdminGroup;
 import com.mobilepark.airtalk.data.AdminGroupAuth;
 import com.mobilepark.airtalk.data.Menu;
 import com.mobilepark.airtalk.repository.AuthGroupRepository;
-// import com.mobilepark.airtalk.repository.AuthRepository;
+import com.mobilepark.airtalk.repository.AdminGroupAuthRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthGroupService {
@@ -24,8 +23,8 @@ public class AuthGroupService {
     @Autowired
     AuthGroupRepository authGroupRepository;
 
-    // @Autowired
-    // AuthRepository AuthRepository;
+    @Autowired
+    AdminGroupAuthRepository adminGroupAuthRepository;
 
     @Autowired
     MenuService menuService;
@@ -60,10 +59,12 @@ public class AuthGroupService {
     // }
 
     @Transactional
-    public AdminGroup create(String name, String description, String arrayAuth) {
+    public AdminGroup create(String name, String description, String arrayAuth , String menuSeq) {
         AdminGroup AdminGroup = null;
         // AuthGroup AuthGroup = null;
         // JSONObject jsonObject = null;
+        
+        System.out.println("auth: " + arrayAuth);
 
         try {
             /* 그룹 등록 처리 START */
@@ -76,7 +77,7 @@ public class AuthGroupService {
             /* 그룹 등록 처리 END */
 
             /* 그룹 권한 등록 처리 START */
-            // this.adminGroupAuthChange(adminGroup.getAdminGroupSeq(), arrayAuth);
+            this.adminGroupAuthChange(AdminGroup.getAdminGroupSeq(), arrayAuth, menuSeq);
             /* 그룹 권한 등록 처리 END */
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -86,15 +87,14 @@ public class AuthGroupService {
     }
 
     @Transactional
-    public AdminGroup update(int authGroupSeq, String name, String description, String arrayAuth) {
+    public AdminGroup update(int authGroupSeq, String name, String description, String arrayAuth ,String menuSeq) {
         AdminGroup AdminGroup = null;
-        // GroupAuth adminGroupAuth = null;
-        // JSONObject jsonObject = null;
         
         System.out.println("authGroupSeq: " + authGroupSeq);
         System.out.println("gname: " + name);
         System.out.println("userGroup: " + description);
         System.out.println("auth: " + arrayAuth);
+        System.out.println("auth: " + menuSeq);
 
         try {
             /* 그룹 등록 처리 START */
@@ -108,7 +108,7 @@ public class AuthGroupService {
             /* 그룹 등록 처리 END */
 
             /* 그룹 권한 등록 처리 START */
-            // this.adminGroupAuthChange(Group.getAdminGroupSeq(), arrayAuth);
+            this.adminGroupAuthChange(authGroupSeq, arrayAuth, menuSeq);
             /* 그룹 권한 등록 처리 END */
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -125,7 +125,7 @@ public class AuthGroupService {
         System.out.println("번호 : " + adminGroupSeq);
         try {
             /* 그룹 권한 삭제 처리 START */
-            // adminGroupAuthRepository.deleteAllByAdminGroupSeqEquals(authGroupSeq);
+            adminGroupAuthRepository.deleteAllByAdminGroupSeqEquals(adminGroupSeq);
             /* 그룹 권한 삭제 처리 END */
 
             /* 그룹 삭제 처리 START */
@@ -136,26 +136,27 @@ public class AuthGroupService {
         }
     }
 
-    // public List<AdminGroupAuth> getMenuAuthList(int adminGroupSeq) {
-    //     List<AdminGroupAuth> adminGroupAuthList = new ArrayList<>();
+    public List<AdminGroupAuth> getMenuAuthList(int adminGroupSeq) {
+        List<AdminGroupAuth> adminGroupAuthList = new ArrayList<>();
 
-    //     try {
-    //         List<Menu> menuList = menuService.getMenuList();
+        try {
 
-    //         List<AdminGroupAuth> source = adminGroupAuthRepository.findByAdminGroupSeq(adminGroupSeq, new Sort(Sort.Direction.DESC, "seq"));
+            List<AdminGroupAuth> source = adminGroupAuthRepository.findByAdminGroupSeq(adminGroupSeq, Sort.by(Sort.Direction.ASC, "seq"));
 
-    //         Menu menu = null;
-    //         for(int i=0; i<menuList.size(); i++) {
-    //             menu = menuList.get(i);
+            System.out.println("DB 데이터 :"+source);
 
-    //             this.menuCheck(adminGroupAuthList, menu, source);
-    //         }
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
+            Menu menu = null;
+            for(int i=0; i<source.size(); i++) {
+                // menu = menuList.get(i);
+                adminGroupAuthList = source;
 
-    //     return adminGroupAuthList;
-    // }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return adminGroupAuthList;
+    }
 
     // private void menuCheck(List<AdminGroupAuth> target, Menu menu, List<AdminGroupAuth> source) {
     //     try {
@@ -180,27 +181,32 @@ public class AuthGroupService {
     //     }
     // }
 
-    // private void adminGroupAuthChange(Integer adminGroupSeq, String arrayAuth) {
-    //     try {
-    //         AdminGroupAuth adminGroupAuth = null;
-    //         JSONObject jsonObject = null;
-    //         JSONParser jsonParser = new JSONParser();
-    //         JSONArray jsonArray = (JSONArray) jsonParser.parse(arrayAuth);
+    private void adminGroupAuthChange(Integer adminGroupSeq, String arrayAuth, String menuSeq) {
+        try {
+            AdminGroupAuth adminGroupAuth = null;
 
-    //         for(int i=0; i<jsonArray.size(); i++) {
-    //             jsonObject = (JSONObject)jsonArray.get(i);
+            System.out.println("번호 : " + adminGroupSeq);
 
-    //             adminGroupAuth = new AdminGroupAuth();
-    //             adminGroupAuth.setAdminGroupSeq(adminGroupSeq);
-    //             adminGroupAuth.setMenuSeq(Integer.parseInt(jsonObject.get("menuSeq").toString()));
-    //             adminGroupAuth.setAuth(jsonObject.get("auth").toString());
-    //             adminGroupAuth.setRegDate(new Date());
-    //             adminGroupAuth.setModDate(new Date());
+            arrayAuth=arrayAuth.substring(1,arrayAuth.lastIndexOf("]"));
+            menuSeq=menuSeq.substring(1,menuSeq.lastIndexOf("]"));
+            String[] array = arrayAuth.split(",");
+            String[] arrayMenuSeq = menuSeq.split(",");
 
-    //             adminGroupAuthRepository.save(adminGroupAuth);
-    //         }
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
-    // }
+            for(int i=0;i<array.length;i++) {
+                array[i]=array[i].substring(1, array[i].length() - 1);
+                arrayMenuSeq[i]=arrayMenuSeq[i].substring(1, arrayMenuSeq[i].length() - 1);
+
+                adminGroupAuth = new AdminGroupAuth();
+                adminGroupAuth.setAdminGroupSeq(adminGroupSeq);
+                adminGroupAuth.setMenuSeq(Integer.parseInt(arrayMenuSeq[i]));
+                adminGroupAuth.setAuth(array[i]);
+                adminGroupAuth.setRegDate(new Date());
+                adminGroupAuth.setModDate(new Date());
+
+                adminGroupAuthRepository.save(adminGroupAuth);
+                }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
 }
