@@ -2,7 +2,8 @@ package com.mobilepark.airtalk.controller;
 
 import com.mobilepark.airtalk.data.AdminGroup;
 import com.mobilepark.airtalk.data.Menu;
-import com.mobilepark.airtalk.service.AuthGroupService;
+import com.mobilepark.airtalk.data.AdminGroupAuth;
+import com.mobilepark.airtalk.service.AdminGroupService;
 import com.mobilepark.airtalk.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,21 +13,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.json.simple.JSONArray; //JSON배열 사용
 import com.mobilepark.airtalk.util.DateUtil;
+
 import java.util.List;
+
 
 @Controller
 @RequestMapping("/rest/group")
-public class GroupController {
-    private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
+public class AdminGroupController {
+    private static final Logger logger = LoggerFactory.getLogger(AdminGroupController.class);
 
     @Autowired
-    public AuthGroupService authGroupService;
+    public AdminGroupService authGroupService;
    
     @Autowired
     public MenuService menuService;
@@ -111,7 +115,6 @@ public class GroupController {
                   jsonObject.put("title",menu.getTitle());
               
                   req_array.add(jsonObject);
-
             }
             data = req_array.toString();
 
@@ -121,6 +124,37 @@ public class GroupController {
         logger.info(data);
        
         return data;
+    }
+
+    /****************************
+     --------- 그룹 상세 화면 ----- 
+     ****************************/
+    @RequestMapping(value="/modify", method=RequestMethod.GET)
+    @ResponseBody
+    public String modify(@RequestParam("adminGroupSeq") Integer adminGroupSeq ) {
+        List<AdminGroupAuth> adminGroupAuthList = null;
+        String data = "";
+        JSONArray req_array = new JSONArray();
+        System.out.println("DB 데이터 :"+adminGroupSeq);
+        
+        try {
+            adminGroupAuthList = authGroupService.getMenuAuthList(adminGroupSeq);
+            
+            for(AdminGroupAuth adminGroupAuth : adminGroupAuthList) {
+                  JSONObject jsonObject = new JSONObject();
+                  jsonObject.put("auth",adminGroupAuth.getAuth());
+              
+                  req_array.add(jsonObject);
+            }
+            data = req_array.toString();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        logger.info(data);
+       
+        return data;
+
     }
 
 
@@ -139,20 +173,21 @@ public class GroupController {
             JSONObject jObject = (JSONObject) parser.parse(param);
 
             System.out.println("파라미터 정보 JSON" + jObject.toString());
-           
-            String gname = (String)jObject.get("gname"); 
+
+            //String gname = (String)jObject.get("gname"); 
+            String gname = String.valueOf(jObject.get("gname")); 
             String userGroup = (String)jObject.get("userGroup"); 
-            String auth = (String)jObject.get("auth"); 
-            String regDate = (String)jObject.get("regDate"); 
+            Object auth = jObject.get("auth");
+            Object menuSeq = jObject.get("menuSeq");
 
             System.out.println("gname: " + gname);
             System.out.println("userGroup: " + userGroup);
-            System.out.println("auth: " + auth);
-            System.out.println("regDate: " + regDate);
+            System.out.println("auth: " + auth.toString());
+            System.out.println("menuSeq: " + menuSeq.toString());
 
               //CREATE 정보 전달
             try {
-                AdminGroup = authGroupService.create(gname, userGroup, regDate);
+                AdminGroup = authGroupService.create(gname, userGroup, auth.toString() , menuSeq.toString());
                 result = "SUCCESS";
              } catch(Exception e) {
                 logger.error(e.getMessage());
@@ -186,16 +221,18 @@ public class GroupController {
             String authGroupSeq = (String)jObject.get("authGroupSeq"); 
             String gname = (String)jObject.get("gname"); 
             String userGroup = (String)jObject.get("userGroup"); 
-            String auth = (String)jObject.get("auth"); 
+            Object auth = jObject.get("auth");
+            Object menuSeq = jObject.get("menuSeq");
 
             System.out.println("authGroupSeq: " + authGroupSeq);
             System.out.println("gname: " + gname);
             System.out.println("userGroup: " + userGroup);
-            System.out.println("auth: " + auth);
+            System.out.println("auth: " + auth.toString());
+            System.out.println("menuSeq: " + menuSeq.toString());
 
               //UPDATE 정보 전달
             try {
-                AdminGroup = authGroupService.update(Integer.parseInt(authGroupSeq),gname, userGroup ,auth);
+                AdminGroup = authGroupService.update(Integer.parseInt(authGroupSeq),gname, userGroup ,auth.toString(), menuSeq.toString());
                 result = "SUCCESS";
              } catch(Exception e) {
                 logger.error(e.getMessage());
