@@ -3,7 +3,7 @@ package com.mobilepark.airtalk.controller;
 import com.mobilepark.airtalk.data.AdminGroup;
 import com.mobilepark.airtalk.data.Menu;
 import com.mobilepark.airtalk.data.AdminGroupAuth;
-import com.mobilepark.airtalk.service.AuthGroupService;
+import com.mobilepark.airtalk.service.AdminGroupService;
 import com.mobilepark.airtalk.service.MenuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +26,11 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/rest/group")
-public class GroupController {
-    private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
+public class AdminGroupController {
+    private static final Logger logger = LoggerFactory.getLogger(AdminGroupController.class);
 
     @Autowired
-    public AuthGroupService authGroupService;
+    public AdminGroupService authGroupService;
    
     @Autowired
     public MenuService menuService;

@@ -3,7 +3,7 @@ package com.mobilepark.airtalk.service;
 import com.mobilepark.airtalk.data.AdminGroup;
 import com.mobilepark.airtalk.data.AdminGroupAuth;
 import com.mobilepark.airtalk.data.Menu;
-import com.mobilepark.airtalk.repository.AuthGroupRepository;
+import com.mobilepark.airtalk.repository.AdminGroupRepository;
 import com.mobilepark.airtalk.repository.AdminGroupAuthRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,11 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class AuthGroupService {
-    private static final Logger logger = LoggerFactory.getLogger(AuthGroupService.class);
+public class AdminGroupService {
+    private static final Logger logger = LoggerFactory.getLogger(AdminGroupService.class);
 
     @Autowired
-    AuthGroupRepository authGroupRepository;
+    AdminGroupRepository authGroupRepository;
 
     @Autowired
     AdminGroupAuthRepository adminGroupAuthRepository;
