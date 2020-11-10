@@ -100,10 +100,10 @@
                                                         "label": "링크",
                                                         action: function (obj) {
 
-                                                            if(sessionAuth.indexOf("C") < 0) {
-                                                                alert(/*<![CDATA[*/"[[#{common.auth.create}]]"/*]]*/);
-                                                                return false;
-                                                            }
+                                                            // if(sessionAuth.indexOf("C") < 0) {
+                                                            //     alert(/*<![CDATA[*/"[[#{common.auth.create}]]"/*]]*/);
+                                                            //     return false;
+                                                            // }
 
                                                             $node = tree.create_node($node, {
                                                                 text: 'New File',
@@ -120,10 +120,10 @@
                                                         "label": "폴더",
                                                         action: function (obj) {
 
-                                                            if(sessionAuth.indexOf("C") < 0) {
-                                                                alert(/*<![CDATA[*/"[[#{common.auth.create}]]"/*]]*/);
-                                                                return false;
-                                                            }
+                                                            // if(sessionAuth.indexOf("C") < 0) {
+                                                            //     alert(/*<![CDATA[*/"[[#{common.auth.create}]]"/*]]*/);
+                                                            //     return false;
+                                                            // }
 
                                                             $node = tree.create_node($node, {
                                                                 text: 'New Folder',
@@ -141,10 +141,10 @@
                                                 "label": "삭제",
                                                 action: function (obj) {
 
-                                                    if(sessionAuth.indexOf("D") < 0) {
-                                                        alert(/*<![CDATA[*/"[[#{common.auth.remove}]]"/*]]*/);
-                                                        return false;
-                                                    }
+                                                    // if(sessionAuth.indexOf("D") < 0) {
+                                                    //     alert(/*<![CDATA[*/"[[#{common.auth.remove}]]"/*]]*/);
+                                                    //     return false;
+                                                    // }
 
                                                     if (confirm("삭제 하시겠습니까?")) {
                                                         tree.delete_node($node);
@@ -157,10 +157,10 @@
                                                 "label": "수정",
                                                 action: function (obj) {
 
-                                                    if(sessionAuth.indexOf("U") < 0) {
-                                                        alert(/*<![CDATA[*/"[[#{common.auth.update}]]"/*]]*/);
-                                                        return false;
-                                                    }
+                                                    // if(sessionAuth.indexOf("U") < 0) {
+                                                    //     alert(/*<![CDATA[*/"[[#{common.auth.update}]]"/*]]*/);
+                                                    //     return false;
+                                                    // }
 
                                                     tree.edit($node);
                                                 }

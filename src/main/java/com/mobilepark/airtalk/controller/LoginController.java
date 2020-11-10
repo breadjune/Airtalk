@@ -28,7 +28,7 @@ public class LoginController {
     @Autowired
     public LoginService loginService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/login.json", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, String> login(@RequestBody JSONObject form, HttpServletResponse res) throws Exception {
         
@@ -58,13 +58,4 @@ public class LoginController {
         return map;
 
     }
-    
-    @RequestMapping("/expire")
-    public String expire() {
-    // ModelAndView view = new ModelAndView();
-    System.out.println(">>>>>>>>>>>>>>>login page invoked!!!!!!!");
-
-    return "/login";
-
-  }
 }

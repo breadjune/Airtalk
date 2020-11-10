@@ -16,23 +16,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/rest/admin-list")
+@RequestMapping("/rest/admin")
 public class AdminController {
 
     @Autowired
     public AdminService adminService;
 
-    @GetMapping(value = "/adminList")
+    @GetMapping(value = "/search.json")
     @ResponseBody
-    public List<Admin> adminList(HttpServletRequest req) {
+    public List<Admin> search(HttpServletRequest req) {
         List<Admin> adminList = adminService.getAdminList();
 
         return adminList;
     }
 
-    @GetMapping(value = "/getAdminInfo")
+    @GetMapping(value = "/view.json")
     @ResponseBody
-    public Admin getAdminInfo(HttpServletRequest req) {
+    public Admin view(HttpServletRequest req) {
         String adminId = req.getQueryString().substring(8, req.getQueryString().length());
 
         Admin adminInfo = adminService.getAdminInfo(adminId);
@@ -40,9 +40,9 @@ public class AdminController {
         return adminInfo;
     }
 
-    @PostMapping(value = "/updateAdminInfo")
+    @PostMapping(value = "/update.json")
     @ResponseBody
-    public String updateAdminInfo(Admin admin) {
+    public String update(Admin admin) {
 
         System.out.println("getAdminGroupSeq : " + admin.getAdminGroupSeq());
         System.out.println("getPhone : " + admin.getPhone());
@@ -54,9 +54,9 @@ public class AdminController {
         return result;
     }
 
-    @PostMapping(value = "/createAdmin")
+    @PostMapping(value = "/create.json")
     @ResponseBody
-    public String createAdmin(Admin admin) {
+    public String create(Admin admin) {
 
         System.out.println("getAdminId : " + admin.getAdminId());
         System.out.println("getAdminName : " + admin.getAdminName());
@@ -70,9 +70,9 @@ public class AdminController {
         return result;
     }
 
-    @GetMapping(value = "/deleteAdmin")
+    @GetMapping(value = "/delete.json")
     @ResponseBody
-    public String deleteAdmin(String adminId) {
+    public String delete(String adminId) {
         String result = "";
 
         result = adminService.deleteAdmin(adminId);
