@@ -52,12 +52,10 @@ public class AdminGroupController {
     public @ResponseBody String search (Model model, @RequestBody String form) {
         JSONArray req_array = new JSONArray();
         String data = "";
-
         //검색이 필요하다면 사용
         String searchWord = "";
         String searchType = "";
         try {
-
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(form);
             JSONObject jsonObj = (JSONObject) obj;
@@ -67,7 +65,6 @@ public class AdminGroupController {
 
             logger.info("searchWord : " + searchWord);
             logger.info("searchType : " + searchType);
-
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -87,7 +84,6 @@ public class AdminGroupController {
                 }
             }
             data = req_array.toString();
-
         } catch(Exception e) {
             logger.error(e.getMessage());
         }
@@ -97,11 +93,11 @@ public class AdminGroupController {
     }
     
     /****************************
-     --------- 그룹 생성 화면 ----- 
+     --------- 메뉴 불러오기 화면 ----- 
      ****************************/
-    @RequestMapping(value="/create", method=RequestMethod.GET)
+    @RequestMapping(value="/menuList.json", method=RequestMethod.GET)
     @ResponseBody
-    public String create() {
+    public String menuList() {
         List<Menu> menuAuthList = null;
         String data = "";
         JSONArray req_array = new JSONArray();
@@ -117,7 +113,6 @@ public class AdminGroupController {
                   req_array.add(jsonObject);
             }
             data = req_array.toString();
-
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -129,34 +124,28 @@ public class AdminGroupController {
     /****************************
      --------- 그룹 상세 화면 ----- 
      ****************************/
-    @RequestMapping(value="/modify", method=RequestMethod.GET)
+    @RequestMapping(value="/view.json", method=RequestMethod.GET)
     @ResponseBody
-    public String modify(@RequestParam("adminGroupSeq") Integer adminGroupSeq ) {
+    public String view(@RequestParam("adminGroupSeq") Integer adminGroupSeq ) {
         List<AdminGroupAuth> adminGroupAuthList = null;
         String data = "";
         JSONArray req_array = new JSONArray();
-        System.out.println("DB 데이터 :"+adminGroupSeq);
-        
         try {
             adminGroupAuthList = authGroupService.getMenuAuthList(adminGroupSeq);
             
             for(AdminGroupAuth adminGroupAuth : adminGroupAuthList) {
                   JSONObject jsonObject = new JSONObject();
                   jsonObject.put("auth",adminGroupAuth.getAuth());
-              
                   req_array.add(jsonObject);
             }
             data = req_array.toString();
-
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
         logger.info(data);
        
         return data;
-
     }
-
 
     /****************************
      --------- 그룹 생성 ---------
@@ -165,25 +154,17 @@ public class AdminGroupController {
     @ResponseBody    // 중요하다
     public String create(@RequestBody String param) {
         AdminGroup = new AdminGroup();
-            System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
 
-            System.out.println("파라미터 정보 JSON" + jObject.toString());
-
             //String gname = (String)jObject.get("gname"); 
             String gname = String.valueOf(jObject.get("gname")); 
             String userGroup = (String)jObject.get("userGroup"); 
             Object auth = jObject.get("auth");
             Object menuSeq = jObject.get("menuSeq");
-
-            System.out.println("gname: " + gname);
-            System.out.println("userGroup: " + userGroup);
-            System.out.println("auth: " + auth.toString());
-            System.out.println("menuSeq: " + menuSeq.toString());
 
               //CREATE 정보 전달
             try {
@@ -193,12 +174,10 @@ public class AdminGroupController {
                 logger.error(e.getMessage());
                 result = "FAIL";
             }
-
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         return result;
     }
 
@@ -209,26 +188,17 @@ public class AdminGroupController {
     @ResponseBody    // 중요하다
     public String update(@RequestBody String param) {
         AdminGroup = new AdminGroup();
-            System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
-
-            System.out.println("파라미터 정보 JSON" + jObject.toString());
            
             String authGroupSeq = (String)jObject.get("authGroupSeq"); 
             String gname = (String)jObject.get("gname"); 
             String userGroup = (String)jObject.get("userGroup"); 
             Object auth = jObject.get("auth");
             Object menuSeq = jObject.get("menuSeq");
-
-            System.out.println("authGroupSeq: " + authGroupSeq);
-            System.out.println("gname: " + gname);
-            System.out.println("userGroup: " + userGroup);
-            System.out.println("auth: " + auth.toString());
-            System.out.println("menuSeq: " + menuSeq.toString());
 
               //UPDATE 정보 전달
             try {
@@ -238,7 +208,6 @@ public class AdminGroupController {
                 logger.error(e.getMessage());
                 result = "FAIL";
             }
-
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -250,37 +219,28 @@ public class AdminGroupController {
      /****************************
      --------- 그룹 삭제 ---------
      ****************************/
-    @RequestMapping(value="/remove.json", method=RequestMethod.POST)
+    @RequestMapping(value="/delete.json", method=RequestMethod.POST)
     @ResponseBody    // 중요하다
-    public String remove(@RequestBody String param) {
+    public String delete(@RequestBody String param) {
         AdminGroup = new AdminGroup();
-            System.out.println("파라미터 정보" + param);
             String result = "";
      //JSON파싱
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
-
-            System.out.println("파라미터 정보 JSON" + jObject.toString());
-           
             String authGroupSeq = (String)jObject.get("authGroupSeq"); 
-
-            System.out.println("authGroupSeq: " + authGroupSeq);
-
               //DELETE 정보 전달
             try {
-                authGroupService.remove(Integer.parseInt(authGroupSeq));
+                authGroupService.delete(Integer.parseInt(authGroupSeq));
                 result = "SUCCESS";
              } catch(Exception e) {
                 logger.error(e.getMessage());
                 result = "FAIL";
             }
-
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
         return result;
     }
 
