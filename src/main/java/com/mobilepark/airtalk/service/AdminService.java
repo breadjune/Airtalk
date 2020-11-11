@@ -21,7 +21,7 @@ public class AdminService {
     public AdminRepository adminRepository;
 
     // 계정 관리 리스트
-    public List<Admin> getAdminList() {
+    public List<Admin> search() {
         List<Admin> adminList = new ArrayList<>();
         
         adminList = adminRepository.findAll();
@@ -31,7 +31,7 @@ public class AdminService {
     }
 
     // 상세 페이지 정보 조회
-    public Admin getAdminInfo(String adminId) {
+    public Admin view(String adminId) {
         Admin adminInfo = new Admin();
 
         adminInfo = adminRepository.findByAdminId(adminId);
@@ -40,7 +40,7 @@ public class AdminService {
     }
 
     // 계정 정보 수정
-    public String updateAdminInfo(Admin admin) {
+    public String update(Admin admin) {
         String result = "SUCCESS";
 
         try {
@@ -68,7 +68,7 @@ public class AdminService {
     }
 
     // 계정 생성
-    public String createAdmin(Admin admin) {
+    public String create(Admin admin) {
         String result = "SUCCESS";
 
         try {
@@ -86,7 +86,7 @@ public class AdminService {
     }
 
     // 계정 삭제
-    public String deleteAdmin(String adminId) {
+    public String delete(String adminId) {
         String result = "SUCCESS";
 
         try {

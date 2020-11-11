@@ -7,11 +7,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.mobilepark.airtalk.data.BoardFile;
+import com.mobilepark.airtalk.service.FileService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.json.simple.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,24 +26,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
     
+    @Autowired
+    public FileService fileService;
+
     @RequestMapping(value="/search.json",method = RequestMethod.POST)
     public @ResponseBody List<BoardFile> search (Model model, @RequestBody String form) {
-        List<BoardFile> list = new ArrayList<>();
-        for(int i=0; i <= 4; i++) {
-            BoardFile boardFile = new BoardFile();
-
-            boardFile.setSeq(i);
-            boardFile.setTitle("파일게시판 테스트"+i);
-            // boardFile.setContents("콘텐츠"+i);
-            boardFile.setWriter("작성자"+i);
-            // boardFile.setFileName("File Name"+i);
-            // boardFile.setFileRealName("File Read Name"+i);
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-            boardFile.setRegDate(sdf.format(new Date()));
-            
-            list.add(boardFile);
-            logger.info(boardFile.toString());
-        }
+        List<BoardFile> list = fileService.search();
 
         return list;
 

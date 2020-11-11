@@ -1,15 +1,10 @@
 package com.mobilepark.airtalk.data;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -35,11 +30,11 @@ public class BoardFile {
     @Column(name="WRITER")
     private String writer;
 
-    @Column(name="FILE_NAME", nullable = false)
+    @Column(name="FILE_NAME")
     private String FileName;
 
-    @Column(name="FILE_REAL_NAME", nullable = false)
-    private String fileRealName;
+    @Column(name="REAL_FILE_NAME")
+    private String RealFileName;
 
     @Column(name="REG_DATE", updatable=false, nullable = false)
     private String regDate;

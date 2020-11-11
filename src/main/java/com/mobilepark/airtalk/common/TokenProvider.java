@@ -26,41 +26,23 @@ public class TokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
-    // properties에서 비밀키 가지고 옴
-    // @Value("${spring.jwt.token.secret-key}") String secretKey;
+    //properties에서 비밀키 가지고 옴
+    @Value("${spring.jwt.token.secret-key}") String sKey;
 
-    // private Environment env;
+    // private String secretKey = "AiraTalkVueBootstrapDashboardSpringbootSequrityJsonWebTokenSecretKeyProvider";
 
-    // @Autowired
-    // public TokenProvider(Environment env) {
-    //     this.env = env;
-    // }
+    // 토큰 생성
+    public String createToken(String name, String id) throws Exception {
 
-    private String secretKey = "AiraTalkVueBootstrapDashboardSpringbootSequrityJsonWebTokenSecretKeyProvider";
-
-    public Key JWTAlgorithm() {
-        // String secretKey = env.getProperty("spring.jwt.token.secret-key");
         // 비밀키 binary 형식으로 변환
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(sKey);
         // 알고리즘 지정(SHA256)
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;    
         // JWT에서 제공하는 SHA256 알고리즘으로 KEY 생성
         Key SHAkey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
-        return SHAkey;
-    }
-
-    // 토큰 생성
-    public String createToken(String name, String id) throws Exception {
-
-        // String secretKey = env.getProperty("spring.jwt.token.secret-key");
-
-        logger.info("secretKey : " + secretKey);
+        logger.info("secretKey : " + sKey);
         logger.info("validation : " + System.currentTimeMillis());
-
-        Key SHAkey = JWTAlgorithm();
-
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
         String jwt = Jwts.builder()
                     .setHeaderParam("typ", "JWT")
@@ -91,7 +73,12 @@ public class TokenProvider {
     //토큰 전체 정보 확인
     public void tokenReader(String token) {
 
-        Key SHAkey = JWTAlgorithm();
+        // 비밀키 binary 형식으로 변환
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(sKey);
+        // 알고리즘 지정(SHA256)
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;    
+        // JWT에서 제공하는 SHA256 알고리즘으로 KEY 생성
+        Key SHAkey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         Claims body = Jwts.parser().setSigningKey(SHAkey).parseClaimsJws(token).getBody();
         String iss = body.getIssuer();
@@ -103,10 +90,17 @@ public class TokenProvider {
     }
 
     //토큰 만료 확인
-    public Boolean validationToken(String token) {
+    public Boolean validationToken(String secretKey, String token) {
+
+        // 비밀키 binary 형식으로 변환
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+        // 알고리즘 지정(SHA256)
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;    
+        // JWT에서 제공하는 SHA256 알고리즘으로 KEY 생성
+        Key SHAkey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
         try {
             if (token != null) {
-                Key SHAkey = JWTAlgorithm();
                 Date exp = Jwts.parser().setSigningKey(SHAkey).parseClaimsJws(token).getBody().getExpiration();;
                 logger.info("exp : " + exp);
                 return dateCompare(exp);

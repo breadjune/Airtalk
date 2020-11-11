@@ -30,10 +30,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
     // public WebMvcConfig(Environment env) {
     //     this.env = env;
     // }
+    
+    @Bean
+    public AuthenticationInterceptor authenticationInterceptor() {
+        return new AuthenticationInterceptor();
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AuthenticationInterceptor())
+        registry.addInterceptor(authenticationInterceptor())
                 .addPathPatterns(DIRECTORY_ADMIN_ALL)
                 // .excludePathPatterns("/rest/home")         //홈 페이지 예외 처리
                 // .excludePathPatterns("/rest/dashboard")    //대쉬보드 페이지 예외 처리

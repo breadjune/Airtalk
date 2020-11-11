@@ -25,7 +25,7 @@ public class AdminController {
     @GetMapping(value = "/search.json")
     @ResponseBody
     public List<Admin> search(HttpServletRequest req) {
-        List<Admin> adminList = adminService.getAdminList();
+        List<Admin> adminList = adminService.search();
 
         return adminList;
     }
@@ -35,7 +35,7 @@ public class AdminController {
     public Admin view(HttpServletRequest req) {
         String adminId = req.getQueryString().substring(8, req.getQueryString().length());
 
-        Admin adminInfo = adminService.getAdminInfo(adminId);
+        Admin adminInfo = adminService.view(adminId);
         
         return adminInfo;
     }
@@ -49,7 +49,7 @@ public class AdminController {
         System.out.println("getEmail : " + admin.getEmail());
         System.out.println("getPassword : " + admin.getPassword());
 
-        String result = adminService.updateAdminInfo(admin);
+        String result = adminService.update(admin);
 
         return result;
     }
@@ -65,7 +65,7 @@ public class AdminController {
         System.out.println("getPhone : " + admin.getPhone());
         System.out.println("getEmail : " + admin.getEmail());
 
-        String result = adminService.createAdmin(admin);
+        String result = adminService.create(admin);
 
         return result;
     }
@@ -75,7 +75,7 @@ public class AdminController {
     public String delete(String adminId) {
         String result = "";
 
-        result = adminService.deleteAdmin(adminId);
+        result = adminService.delete(adminId);
 
         return result;
     }

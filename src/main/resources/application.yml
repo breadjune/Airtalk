@@ -17,6 +17,8 @@ server:
     basedir: .
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   devtools:
     livereload:
       enabled: true

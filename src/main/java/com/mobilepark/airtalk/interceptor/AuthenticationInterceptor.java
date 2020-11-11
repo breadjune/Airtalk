@@ -21,8 +21,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     // @Autowired
     // public TokenProvider tp;
 
-    @Value("${spring.jwt.token.secret-key}") String secretKey;
-
+    @Value("${spring.jwt.token.secret-key}") 
+    private String secretKey;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -38,9 +38,10 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 String token = cookie.getValue();
                 logger.info("auth name : " + name);
                 logger.info("auth cookie : " + token);
+                logger.info("secret key : " + secretKey);
                 if(cookie.getName().equals("auth")) {
                     // tp.tokenReader(token);
-                    expire = tp.validationToken(token);
+                    expire = tp.validationToken(secretKey, token);
                     logger.info("expire check : " + expire);
                     if(!expire) response.setHeader("authcheck", "false");
                 }

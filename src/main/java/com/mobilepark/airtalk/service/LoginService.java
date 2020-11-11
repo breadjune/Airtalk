@@ -49,10 +49,6 @@ public class LoginService {
         return token;
     }
 
-    public Boolean validation(String token) throws Exception {
-        return tokenProvider.validationToken(token);
-    }
-
     // public Key JWTAlgorithm() {
     //     // 비밀키 binary 형식으로 변환
     //     byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
