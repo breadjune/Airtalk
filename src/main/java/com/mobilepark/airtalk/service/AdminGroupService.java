@@ -118,7 +118,7 @@ public class AdminGroupService {
     }
 
     @Transactional
-    public void remove(int adminGroupSeq) {
+    public void delete(int adminGroupSeq) {
         // AdminGroupAuth adminGroupAuth = null;
         // JSONObject jsonObject = null;
         
