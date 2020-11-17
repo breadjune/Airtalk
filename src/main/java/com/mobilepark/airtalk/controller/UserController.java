@@ -36,32 +36,75 @@ public class UserController {
     // }
 
       /****************************
-     --------- 그룹 조회 ---------
+         --------- 조회 ---------
      ****************************/
     @RequestMapping(value="/list",method = RequestMethod.POST)
     public @ResponseBody List<User> list (Model model, @RequestBody String form) {
         List<User> list = userService.list();
-        logger.info("데이터 정보 : " + list);
+        logger.info("데이터 정보 : " + list.toString());
 
 
         return list;
     }
-    //테스트 
-    // @RequestMapping(value = "/create.json" , method=RequestMethod.POST)
-    // public @ResponseBody String create(@RequestBody String test){
-    //     logger.info("EditorController");
-    //     logger.info("데이터 정보 : " + test);
-    //     User = new User();
-    //     String result = "";
+    /****************************
+        --------- 생성 ---------
+     ****************************/
+    @RequestMapping(value = "/create.json" , method=RequestMethod.POST)
+    public @ResponseBody String create(@RequestBody String param){
+        logger.info("데이터 정보 : " + param);
+        User = new User();
+        String result = "";
 
-    //           //CREATE 정보 전달
-    //         try {
-    //             userService.create(test);
-    //             result = "SUCCESS";
-    //          } catch(Exception e) {
-    //             logger.error(e.getMessage());
-    //             result = "FAIL";
-    //     }
-    //     return result;
-    // }
+        //CREATE 정보 전달
+            try {
+                userService.create(param);
+                result = "SUCCESS";
+             } catch(Exception e) {
+                logger.error(e.getMessage());
+                result = "FAIL";
+        }
+        return result;
+    }
+
+    /****************************
+        --------- 수정 ---------
+     ****************************/
+    @RequestMapping(value = "/update.json" , method=RequestMethod.POST)
+    public @ResponseBody String update(@RequestBody String param){
+        logger.info("데이터 정보 : " + param);
+        User = new User();
+        String result = "";
+
+        //CREATE 정보 전달
+            try {
+                userService.update(param);
+                result = "SUCCESS";
+             } catch(Exception e) {
+                logger.error(e.getMessage());
+                result = "FAIL";
+        }
+        return result;
+    }
+
+    /****************************
+       ---------삭제 ---------
+     ****************************/
+    @RequestMapping(value="/delete.json", method=RequestMethod.POST)
+    @ResponseBody    // 중요하다
+    public String delete(@RequestBody String param) {
+        User = new User();
+        logger.info("데이터 정보 : " + param);
+            String result = "";
+     //JSON파싱
+            try {
+                userService.delete(param);
+                result = "SUCCESS";
+             } catch(Exception e) {
+                logger.error(e.getMessage());
+                result = "FAIL";
+            }
+
+        return result;
+    }
+
 }

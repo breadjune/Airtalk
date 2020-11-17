@@ -40,27 +40,72 @@ public class UserService {
         return list;
     }
 
-    // @Transactional
-    // public void create(String test) throws ParseException {
-    //     User User = null;
+    @Transactional
+    public void create(String param) throws ParseException {
+        User User = null;
 
-    //     System.out.println("test 정보: " + test);
-    //     JSONParser parser = new JSONParser();
-    //     JSONObject jObject;
+        System.out.println("test 정보: " + param);
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
         
-    //         jObject = (JSONObject) parser.parse(test);
-    //     try {
-    //         /* START */
-    //         User = new User();
-    //         User.setAdminId((String)jObject.get("adminId"));
-    //         User.setTitle((String)jObject.get("title"));
-    //         User.setContents((String)jObject.get("content"));
-    //         User.setRegDate(new Date());
+            jObject = (JSONObject) parser.parse(param);
+        try {
+            /* START */
+            User = new User();
+            User.setId((String)jObject.get("id"));
+            User.setName((String)jObject.get("name"));
+            User.setPassword((String)jObject.get("password"));
+            User.setHpNo((String)jObject.get("hpNo"));
+            User.setRegDate(new Date());
 
-    //         User = UserRepository.save(User);
+            User = UserRepository.save(User);
 
-    //     } catch (Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
-    // }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void update(String param) throws ParseException {
+        User User = null;
+
+        System.out.println("test 정보: " + param);
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
+        
+            jObject = (JSONObject) parser.parse(param);
+        try {
+            /* START */
+            User = new User();
+            User.setId((String)jObject.get("id"));
+            User.setName((String)jObject.get("name"));
+            User.setPassword((String)jObject.get("password"));
+            User.setHpNo((String)jObject.get("hpNo"));
+            User.setModDate(new Date());
+
+            User = UserRepository.save(User);
+
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void delete(String param) throws ParseException {
+
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
+
+        jObject = (JSONObject) parser.parse(param);
+        String id = (String)jObject.get("id");
+
+        System.out.println("id 정보: ----------" + id);
+
+        try {
+            /* START */
+            UserRepository.deleteById(id);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
 }
