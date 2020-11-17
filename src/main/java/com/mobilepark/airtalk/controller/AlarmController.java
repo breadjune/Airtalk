@@ -27,9 +27,12 @@ public class AlarmController {
 
   @RequestMapping(value="/list",method = RequestMethod.POST)
   public @ResponseBody List<Alarm> search (Model model, @RequestBody JSONObject form, Pageable pageable) {
-    List<Alarm> list = alarmService.list(form);
+    return alarmService.list(form);
 
-    return list;
+  }
 
+  @RequestMapping(value="/count",method = RequestMethod.POST)
+  public @ResponseBody int count (Model model, @RequestBody JSONObject form) { 
+    return alarmService.count(form);
   }
 }
