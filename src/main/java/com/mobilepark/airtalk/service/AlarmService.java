@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import com.mobilepark.airtalk.data.Alarm;
 import com.mobilepark.airtalk.repository.AlarmRepository;
@@ -36,12 +37,12 @@ public class AlarmService {
     Alarm alarm = new Alarm();
     Set<String> likeSet = new HashSet<>();
 
-    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "userId")) {
-      logger.info("success service");
+    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "userId"))
       alarm.setUserId(search);
-      likeSet.add(type);
-    }
+    else if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "code"))
+      alarm.setCode(search);     
 
+    likeSet.add(type);
     return specificationService.like(likeSet, alarm);
   }
 
@@ -53,33 +54,15 @@ public class AlarmService {
    */
   public List<Alarm> list(JSONObject form) {
 
-    List<Alarm>list = new ArrayList<>();
-
     String type = form.get("type").toString();
     String keyword = form.get("keyword").toString();
-    String startString = form.get("start").toString();
+    int start = Integer.parseInt(form.get("start").toString());
     int length = Integer.parseInt(form.get("length").toString());
 
-    logger.info("startString : " + startString);
-
-    int start = Integer.parseInt(startString);
-
-    logger.info("type : " + type);
-    logger.info("keyword : " + keyword);
-
-    int count = alarmRepository.countByUserIdContaining(keyword);
-
-    logger.info("count : " + count);
+    logger.info("params : [type : "+type+"][keyword : "+keyword+"][start : "+start+"][length : "+length+"]");
 
     PageRequest pageRequest = PageRequest.of(start, length);
-
-    // if(type.equals("default")) {
-    //   list = alarmRepository.findByUserIdContaining(keyword, pageRequest);
-    // }
-
-    list = alarmRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
-
-    return list;
+    return alarmRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
   }
 
   /**
@@ -88,7 +71,18 @@ public class AlarmService {
    * @return Integer
    */
   public int count(JSONObject form) {
-    return alarmRepository.countByUserIdContaining(form.get("keyword").toString());
+    int count = 0;
+
+    switch(form.get("type").toString()) {
+      case "userId":
+        count = alarmRepository.countByUserIdContaining(form.get("keyword").toString());
+      case "code":
+        count = alarmRepository.countByCodeContaining(form.get("keyword").toString());
+    } 
+
+    logger.info("Total Count : ["+count+"]");
+
+    return count;
   }
 
 }
