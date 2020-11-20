@@ -1,6 +1,7 @@
 package com.mobilepark.airtalk.data;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,14 +44,17 @@ public class AlarmRecv {
     @Column(name="RECEIVE_YN")
     private Character receiveYn;
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
     @Column(name="RECEIVE_DATE")
-    private String ReceiveDate;
+    private Date ReceiveDate;
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", nullable = false)
-    private String regDate;
+    private Date regDate;
 
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
     @Column(name="MOD_DATE")
-    private String modDate;
+    private Date modDate;
 
     // @ManyToOne(targetEntity = Alarm.class)
     // @JoinColumn(name = "SEQ", insertable = false)
