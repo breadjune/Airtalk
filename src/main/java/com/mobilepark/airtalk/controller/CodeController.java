@@ -34,7 +34,7 @@ public class CodeController {
          --------- 조회 ---------
      ****************************/
     @RequestMapping(value="/list",method = RequestMethod.POST)
-    public @ResponseBody List<Code> list (Model model, @RequestBody String form) {
+    public @ResponseBody List<Code> list () {
         List<Code> list = codeService.list();
         logger.info("데이터 정보 : " + list.toString());
 
@@ -44,7 +44,7 @@ public class CodeController {
     /****************************
         --------- 생성 ---------
      ****************************/
-    @RequestMapping(value = "/create.json" , method=RequestMethod.POST)
+    @RequestMapping(value = "/create" , method=RequestMethod.POST)
     public @ResponseBody  HashMap<String,String> create(@RequestBody String param){
         logger.info("데이터 정보 : " + param);
         Code = new Code();
@@ -65,7 +65,7 @@ public class CodeController {
     /****************************
        ---------삭제 ---------
      ****************************/
-    @RequestMapping(value="/delete.json", method=RequestMethod.POST)
+    @RequestMapping(value="/remove", method=RequestMethod.POST)
     @ResponseBody    // 중요하다
     public HashMap<String,String> delete(@RequestBody String param) {
         Code = new Code();

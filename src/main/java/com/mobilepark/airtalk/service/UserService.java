@@ -10,6 +10,8 @@ import com.mobilepark.airtalk.data.UserAPI;
 import com.mobilepark.airtalk.repository.UserRepository;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +65,7 @@ public class UserService {
         try {
             /* START */
             User = new User();
-            User.setId((String)jObject.get("id"));
+            User.setUserId((String)jObject.get("id"));
             User.setName((String)jObject.get("name"));
             User.setPassword((String)jObject.get("password"));
             User.setHpNo((String)jObject.get("hpNo"));
@@ -76,27 +79,51 @@ public class UserService {
     }
 
     @Transactional
-    public void update(String param) throws ParseException {
+    public String modify(String param) throws ParseException {
+        System.out.println("test 정보: " + param);
+        User User = null;
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
+
+        jObject = (JSONObject) parser.parse(param);
+        User= UserRepository.findByUserId((String)jObject.get("id"));
+
+        String result = ToStringBuilder.reflectionToString(User, ToStringStyle.JSON_STYLE);
+        System.out.println("User 정보11:-------- " + ToStringBuilder.reflectionToString(User, ToStringStyle.JSON_STYLE));
+        
+        return result;
+    }
+
+    @Transactional
+    public int update(String param) throws ParseException {
         User User = null;
 
         System.out.println("test 정보: " + param);
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
-        try {
-            /* START */
-            User = new User();
-            User.setId((String)jObject.get("id"));
-            User.setName((String)jObject.get("name"));
-            User.setPassword((String)jObject.get("password"));
-            User.setHpNo((String)jObject.get("hpNo"));
-            User.setModDate(new Date());
-
-            User = UserRepository.save(User);
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
+        // if (UserRepository.findByUserId((String)jObject.get("id"))!=null){
+            try {
+                /* START */
+                UserRepository.findByUserId((String)jObject.get("id"));
+                User = new User();
+                User.setUserId((String)jObject.get("id"));
+                User.setName((String)jObject.get("name"));
+                User.setPassword((String)jObject.get("password"));
+                User.setHpNo((String)jObject.get("hpNo"));
+                User.setModDate(new Date());
+    
+                User = UserRepository.save(User);
+                return 0;
+    
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return 1;
+            }
+        // }
+        // else
+        // return 1;
+        
     }
 
     @Transactional
@@ -125,7 +152,7 @@ public class UserService {
     
         if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "id")) {
           logger.info("success service");
-          user.setId(search);
+          user.setUserId(search);
           likeSet.add(type);
         }
         else{
@@ -133,7 +160,6 @@ public class UserService {
             user.setName(search);
             likeSet.add(type);
         }
-    
     
         return specificationService.like(likeSet, user);
       }
@@ -149,27 +175,14 @@ public class UserService {
     
             String type = form.get("type").toString();
             String keyword = form.get("keyword").toString();
-            String startString = form.get("start").toString();
             int length = Integer.parseInt(form.get("length").toString());
-    
-            logger.info("startString : " + startString);
-    
-            int start = Integer.parseInt(startString);
-    
-            logger.info("type : " + type);
-            logger.info("keyword : " + keyword);
-    
-            int count = UserRepository.countByIdContaining(keyword);
-    
-            logger.info("count : " + count);
-    
+            int start = Integer.parseInt(form.get("start").toString());
+
             PageRequest pageRequest = PageRequest.of(start, length);
-    
-            // if(type.equals("default")) {
-            // list = alarmRepository.findByUserIdContaining(keyword, pageRequest);
-            // }
-    
-            list = UserRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
+            if (type == "all")
+                list = UserRepository.findAll(pageRequest).getContent();
+            else
+                list = UserRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
     
             return list;
         }
@@ -180,7 +193,21 @@ public class UserService {
          * @return Integer
          */
       public int count(JSONObject form) {
-        return UserRepository.countByIdContaining(form.get("keyword").toString());
+        int count = 0;
+        switch(form.get("type").toString()) {
+        case "all":
+            count = UserRepository.countByAll();
+            break;
+          case "id":
+            count = UserRepository.countByUserIdContaining(form.get("keyword").toString());
+            break;
+          case "name":
+            count = UserRepository.countByNameContaining(form.get("keyword").toString());
+            break;
+        } 
+        logger.info("Total Count : ["+count+"]");
+        return count;
+
       }
     
 }

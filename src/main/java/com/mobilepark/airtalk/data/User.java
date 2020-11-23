@@ -12,13 +12,11 @@ import lombok.Setter;
 @Entity
 @Getter @Setter
 @Table(name="TBL_USER")
-public class User extends BaseSerializable {
+public class User {
 
-    private static final long serialVersionUID = -2382480158604649420L;
-    
     @Id
     @Column(name="ID" , nullable = false)
-    private String id;
+    private String userId;
 
     @Column(name="PASSWORD" , nullable = false)
     private String password;
@@ -30,7 +28,7 @@ public class User extends BaseSerializable {
     private String hpNo;
 
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
-    @Column(name="REG_DATE", updatable = false)
+    @Column(name="REG_DATE", updatable = false ,nullable = false)
     private Date regDate;
 
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")

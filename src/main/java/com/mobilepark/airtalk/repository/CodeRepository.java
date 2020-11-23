@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 public interface CodeRepository extends JpaRepository<Code , String> , JpaSpecificationExecutor<Code>  {
 
     int countByCodeContaining(String keyword);
+    int countByCodeNameContaining(String keyword);
     List<Code> findByCodeContaining(String keyword, PageRequest pageRequest);
 
 }

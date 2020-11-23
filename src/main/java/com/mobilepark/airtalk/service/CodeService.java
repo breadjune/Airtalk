@@ -98,8 +98,6 @@ public class CodeService {
         code.setCodeName(search);
         likeSet.add(type);
     }
-
-
     return specificationService.like(likeSet, code);
   }
 
@@ -114,25 +112,10 @@ public class CodeService {
 
         String type = form.get("type").toString();
         String keyword = form.get("keyword").toString();
-        String startString = form.get("start").toString();
         int length = Integer.parseInt(form.get("length").toString());
-
-        logger.info("startString : " + startString);
-
-        int start = Integer.parseInt(startString);
-
-        logger.info("type : " + type);
-        logger.info("keyword : " + keyword);
-
-        int count = CodeRepository.countByCodeContaining(keyword);
-
-        logger.info("count : " + count);
-
+        int start = Integer.parseInt(form.get("start").toString());
+        
         PageRequest pageRequest = PageRequest.of(start, length);
-
-        // if(type.equals("default")) {
-        // list = alarmRepository.findByUserIdContaining(keyword, pageRequest);
-        // }
 
         list = CodeRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
 
@@ -145,7 +128,17 @@ public class CodeService {
      * @return Integer
      */
   public int count(JSONObject form) {
-    return CodeRepository.countByCodeContaining(form.get("keyword").toString());
+    int count = 0;
+    switch(form.get("type").toString()) {
+      case "code":
+        count = CodeRepository.countByCodeContaining(form.get("keyword").toString());
+        break;
+      case "codeName":
+        count = CodeRepository.countByCodeNameContaining(form.get("keyword").toString());
+        break;
+    } 
+    logger.info("Total Count : ["+count+"]");
+    return count;
   }
 
 }
