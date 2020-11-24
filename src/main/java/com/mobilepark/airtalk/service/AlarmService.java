@@ -6,12 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 
 import com.mobilepark.airtalk.data.Alarm;
 import com.mobilepark.airtalk.repository.AlarmRepository;
@@ -21,7 +19,6 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -61,26 +58,66 @@ public class AlarmService {
 
     List<Alarm> list = new ArrayList<>();
     Map<String, Object> map = new HashMap<>();
-
-    String type = form.get("type").toString();
-    String keyword = form.get("keyword").toString();
-    int start = Integer.parseInt(form.get("start").toString());
-    int length = Integer.parseInt(form.get("length").toString());
+    String type = "";
+    String keyword = "";
+    int start = 0;
+    int length = 0;
+    
+    Iterator<?> keys = form.keySet().iterator();
+    while(keys.hasNext()) {
+      String key = keys.next().toString();
+      if(key.equals("user_id")) 
+      {
+        type = "user_id";
+        keyword = form.get(key).toString();
+      }
+      else if(key.equals("code"))
+      {
+        type = "code";
+        keyword = form.get(key).toString();
+      } 
+      else if(key.equals("reserv_date")) 
+      {
+        type = "reserv_date";
+        keyword = form.get(key).toString();
+      } 
+      else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
+      else if(key.equals("length")) length = Integer.parseInt(form.get(key).toString());
+      else {
+        map.put("err_cd", "-11000");
+        return map;
+      }
+    }
 
     logger.info("params : [type : "+type+"][keyword : "+keyword+"][start : "+start+"][length : "+length+"]");
 
-    PageRequest pageRequest = PageRequest.of(start, length);
-    try {
-      list = alarmRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
-      map.put("result", list);
-      map.put("err_cd", "0000");
-      map.put("total_cnt", list.size());
-    } catch (Exception e) {
-      map.put("result", "");
-      map.put("err_cd", "-1000");
-      map.put("total_cnt", 0);
-      e.printStackTrace();
-    }
+    if(length != 0) {
+      PageRequest pageRequest = PageRequest.of(start, length);
+
+      try {
+        list = alarmRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
+        map.put("result", list);
+        map.put("err_cd", "0000");
+        map.put("total_cnt", list.size());
+      } catch (Exception e) {
+        map.put("err_cd", "-1000");
+        e.printStackTrace();
+      }
+
+    } else {
+      
+      try {
+        if(type.equals("user_id")) list = alarmRepository.findByUserId(keyword);
+        if(type.equals("code")) list = alarmRepository.findByCode(keyword);
+        // if(type.equals("reserv_date")) list = alarmRepository.findeByReservDate(keyword);
+        map.put("result", list);
+        map.put("err_cd", "0000");
+        map.put("total_cnt", list.size());
+      } catch (Exception e) {
+        map.put("err_cd", "-1000");
+        e.printStackTrace();
+      }
+    } 
 
     return map;
   }
@@ -162,16 +199,18 @@ public class AlarmService {
   public int count(JSONObject form) {
     int count = 0;
 
-    logger.info("type : " + form.get("type").toString());
-
-    switch(form.get("type").toString()) {
-      case "userId":
-        count = alarmRepository.countByUserIdContaining(form.get("keyword").toString());
-        break;
-      case "code":
-        count = alarmRepository.countByCodeContaining(form.get("keyword").toString());
-        break;
-    }
+    if(!form.get("user_id").toString().isEmpty()) {
+      count = alarmRepository.countByUserIdContaining(form.get("user_id").toString());
+    } else if(!form.get("code").toString().isEmpty()) {
+      count = alarmRepository.countByCodeContaining(form.get("code").toString());
+    } 
+    // else if(!form.get("reserv_date").toString().isEmpty()) {
+      // try {
+      //   count = alarmRepository.countByReservDateContaining(form.get("keyword").toString());
+      // }catch (Exception e) {
+      //   e.printStackTrace();
+      // }
+    // }
 
     logger.info("Total Count : ["+count+"]");
 
@@ -186,6 +225,7 @@ public class AlarmService {
   public Alarm getParameter(JSONObject form, String service) {
     
     Alarm alarm = new Alarm();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddmmss");
 
     if(service.equals("modify") || service.equals("remove")) {
       System.out.println("modify + remove = seq");
@@ -194,7 +234,6 @@ public class AlarmService {
     
     if(service.equals("modify") || service.equals("create")) {
       System.out.println("modify + create = message, reservDate");
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddmmss");
       alarm.setMessage(form.get("message").toString());
       try{
       alarm.setReservDate(sdf.parse(form.get("reserv_date").toString()));
