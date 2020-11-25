@@ -195,10 +195,11 @@ public class UserService {
       public int count(JSONObject form) {
         int count = 0;
         switch(form.get("type").toString()) {
-        case "all":
+          case "all":
+          System.out.println("all 타입 들어옴 : ----------");
             count = UserRepository.countByAll();
             break;
-          case "id":
+          case "userId":
             count = UserRepository.countByUserIdContaining(form.get("keyword").toString());
             break;
           case "name":
