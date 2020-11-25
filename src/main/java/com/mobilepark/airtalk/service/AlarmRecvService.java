@@ -90,10 +90,11 @@ public class AlarmRecvService {
    */
   public Map<String, String> create(JSONObject form) {
     Map<String, String> result = new HashMap<>();
-    AlarmRecv alarmRecv = this.getParameter(form, "create");
-    logger.info("params : [alarmSeq : "+alarmRecv.getAlarmSeq()+"][userId : "+alarmRecv.getUserId()+"][hpNo : "+alarmRecv.getHpNo()+"]"+
-                         "[receiveYn : "+alarmRecv.getReceiveYn()+"[regDate : "+alarmRecv.getRegDate()+"]");
     try{
+      AlarmRecv alarmRecv = this.getParameter(form, "create");
+      logger.info("params : [alarmSeq : "+alarmRecv.getAlarmSeq()+"][userId : "+alarmRecv.getUserId()+"][hpNo : "+alarmRecv.getHpNo()+"]"+
+                          "[receiveYn : "+alarmRecv.getReceiveYn()+"[regDate : "+alarmRecv.getRegDate()+"]");
+      
       alarmRecvRepository.save(alarmRecv);
       result.put("err_cd", "0000");
     } catch (Exception e) {
@@ -111,10 +112,11 @@ public class AlarmRecvService {
    */
   public Map<String, String> modify(JSONObject form) {
     Map<String, String> result = new HashMap<>();
-    AlarmRecv alarmRecv = this.getParameter(form, "modify");
-    logger.info("params : [alarmSeq : "+alarmRecv.getAlarmSeq()+"][userId : "+alarmRecv.getUserId()+"][hpNo : "+alarmRecv.getHpNo()+"]"+
-                         "[receiveYn : "+alarmRecv.getReceiveYn()+"[regDate : "+alarmRecv.getRegDate()+"]");
     try{
+      AlarmRecv alarmRecv = this.getParameter(form, "modify");
+      logger.info("params : [alarmSeq : "+alarmRecv.getAlarmSeq()+"][userId : "+alarmRecv.getUserId()+"][hpNo : "+alarmRecv.getHpNo()+"]"+
+                          "[receiveYn : "+alarmRecv.getReceiveYn()+"[regDate : "+alarmRecv.getRegDate()+"]");
+    
       alarmRecvRepository.save(alarmRecv);
       result.put("err_cd", "0000");
     } catch (Exception e) {
@@ -133,10 +135,11 @@ public class AlarmRecvService {
   @Transactional
   public Map<String, String> remove(JSONObject form) {
     Map<String, String> result = new HashMap<>();
-    int seq = Integer.parseInt(form.get("alarm_seq").toString());
-    String userId = form.get("user_id").toString();
-    logger.info("param : ["+seq+"]["+userId+"]");
     try{
+      int seq = Integer.parseInt(form.get("alarm_seq").toString());
+      String userId = form.get("user_id").toString();
+      logger.info("param : ["+seq+"]["+userId+"]");
+    
       alarmRecvRepository.deleteByAlarmSeqAndUserId(seq, userId);
       result.put("err_cd", "0000 ");
     } catch (Exception e) {

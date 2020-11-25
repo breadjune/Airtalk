@@ -39,7 +39,7 @@ public class AlarmService {
     Alarm alarm = new Alarm();
     Set<String> likeSet = new HashSet<>();
 
-    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "userId"))
+    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "user_id"))
       alarm.setUserId(search);
     else if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "code"))
       alarm.setCode(search);     
@@ -66,27 +66,27 @@ public class AlarmService {
     Iterator<?> keys = form.keySet().iterator();
     while(keys.hasNext()) {
       String key = keys.next().toString();
-      if(key.equals("user_id")) 
-      {
+      logger.info("key : " + key);
+      if(key.equals("user_id") && !form.get(key).equals("")) {
         type = "user_id";
         keyword = form.get(key).toString();
-      }
-      else if(key.equals("code"))
-      {
+      } else if(key.equals("code") && !form.get(key).equals("")) {
         type = "code";
         keyword = form.get(key).toString();
-      } 
-      else if(key.equals("reserv_date")) 
-      {
+      } else if(key.equals("reserv_date") && !form.get(key).equals("")) {
         type = "reserv_date";
         keyword = form.get(key).toString();
-      } 
-      else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
+      } else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
       else if(key.equals("length")) length = Integer.parseInt(form.get(key).toString());
-      else {
-        map.put("err_cd", "-11000");
-        return map;
-      }
+      // else {
+      //   map.put("err_cd", "-11000");
+      //   return map;
+      // }
+    }
+
+    if(type.equals("")) {
+      map.put("err_cd", "-11000");
+      return map;
     }
 
     logger.info("params : [type : "+type+"][keyword : "+keyword+"][start : "+start+"][length : "+length+"]");
@@ -128,23 +128,21 @@ public class AlarmService {
    * @return Map<String, String>
    */
   public Map<String, String> create(JSONObject form) {
-
-
     Map<String, String> result = new HashMap<>();
-    Alarm alarm = this.getParameter(form, "create");
-    alarm.setRegDate(new Date());
-    logger.info("params : [userId : "+alarm.getUserId()+"][message : "+alarm.getMessage()+"][code : "+alarm.getCode()+"]"+
+    try {
+      Alarm alarm = this.getParameter(form, "create");
+      alarm.setRegDate(new Date());
+      logger.info("params : [userId : "+alarm.getUserId()+"][message : "+alarm.getMessage()+"][code : "+alarm.getCode()+"]"+
                          "[latitude : "+alarm.getLatitude()+"][longitude : "+alarm.getLongitude()+"[bdNm : "+alarm.getBdNm()+"]"+
                          "[reservDate : "+alarm.getReservDate()+"]");
 
-    try {
+    
       alarmRepository.save(alarm);
       result.put("err_cd", "0000");
     } catch (Exception e) {
       result.put("err_cd", "-1000");
       e.getStackTrace();
     }
-
     return result;
   }
 
@@ -154,17 +152,17 @@ public class AlarmService {
    * @return Map<String, String>
    */
   public Map<String, String> modify(JSONObject form) {
-
-    Alarm alarm = this.getParameter(form, "modify");
     Map<String, String> result = new HashMap<>();
-
-    logger.info("params : [seq : "+alarm.getSeq()+"][message : "+alarm.getMessage()+"][reservDate : "+alarm.getReservDate()+"]");
-
-
+    try {
+      Alarm alarm = this.getParameter(form, "modify");
+      logger.info("params : [seq : "+alarm.getSeq()+"][message : "+alarm.getMessage()+"]"+
+      "[reservDate : "+alarm.getReservDate()+"]");
       alarmRepository.save(alarm);
       result.put("err_cd", "0000");
-
-
+    }catch (Exception e) {
+      result.put("err_cd", "-1000");
+      e.getStackTrace();
+    }
     return result;
   }
 
@@ -174,20 +172,17 @@ public class AlarmService {
    * @return Map<String, String>
    */
   public Map<String, String> remove(JSONObject form) {
-
-    Alarm alarm = this.getParameter(form, "remove");
     Map<String, String> result = new HashMap<>();
-
+    try {
+    Alarm alarm = this.getParameter(form, "remove");
     logger.info("params : [seq : "+alarm.getSeq()+"]");
 
-    try {
       alarmRepository.deleteById(alarm.getSeq());
       result.put("err_cd", "0000");
     } catch (Exception e) {
       result.put("err_cd", "-1000");
       e.getStackTrace();
     }
-
     return result;
   }
 
@@ -199,20 +194,22 @@ public class AlarmService {
   public int count(JSONObject form) {
     int count = 0;
 
-    if(!form.get("user_id").toString().isEmpty()) {
-      count = alarmRepository.countByUserIdContaining(form.get("user_id").toString());
-    } else if(!form.get("code").toString().isEmpty()) {
-      count = alarmRepository.countByCodeContaining(form.get("code").toString());
-    } 
-    // else if(!form.get("reserv_date").toString().isEmpty()) {
-      // try {
-      //   count = alarmRepository.countByReservDateContaining(form.get("keyword").toString());
-      // }catch (Exception e) {
-      //   e.printStackTrace();
-      // }
-    // }
+    Iterator<?> keys = form.keySet().iterator();
+    while(keys.hasNext()) {
+      String key = keys.next().toString();
+      if(key.equals("user_id")) count = alarmRepository.countByUserIdContaining(form.get(key).toString());
+      else if(key.equals("code")) count = alarmRepository.countByCodeContaining(form.get(key).toString());
+    }
 
-    logger.info("Total Count : ["+count+"]");
+    logger.info("Total Count1 : ["+count+"]");
+    // logger.info("user_id :" + form.get("user_id").toString() +" / code : " + form.get("code").toString());
+    // if(form.get("user_id").toString().equals("user_id")){
+    //   count = alarmRepository.countByUserIdContaining(form.get("user_id").toString());
+    //   logger.info("Total Count1 : ["+count+"]");
+    // } else if(form.get("code").toString().equals("code")) {
+    //   count = alarmRepository.countByCodeContaining(form.get("code").toString());
+    //   logger.info("Total Count2 : ["+count+"]");
+    // } 
 
     return count;
   }
@@ -248,7 +245,7 @@ public class AlarmService {
       alarm.setCode(form.get("code").toString());
       alarm.setLatitude(new BigDecimal(form.get("latitude").toString()));
       alarm.setLongitude(new BigDecimal(form.get("longitude").toString()));
-      alarm.setBdNm(form.get("bd_nm").toString());
+      alarm.setBdNm(form.get("bd_nm") != null ? form.get("bd_nm").toString() : "");
     }
     return alarm;
   }
