@@ -56,4 +56,53 @@ public class EditorService {
             logger.error(e.getMessage());
         }
     }
+
+    @Transactional
+    public int update(String param) throws ParseException {
+        Editor Editor = null;
+
+        System.out.println("test 정보: " + param);
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
+        jObject = (JSONObject) parser.parse(param);
+        String editorSeq = String.valueOf(jObject.get("editorSeq"));
+
+             try {
+                /* START */
+                EditorRepository.findById(Integer.parseInt(editorSeq));
+                Editor = new Editor();
+                Editor.setEditorSeq(Integer.parseInt(editorSeq));
+                Editor.setAdminId((String)jObject.get("adminId"));
+                Editor.setTitle((String)jObject.get("title"));
+                Editor.setContents((String)jObject.get("content"));
+                Editor.setModDate(new Date());
+    
+                Editor = EditorRepository.save(Editor);
+                return 0;
+    
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return 1;
+            }
+        
+    }
+
+    @Transactional
+    public void delete(String param) throws ParseException {
+
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
+        jObject = (JSONObject) parser.parse(param);
+        String editorSeq = String.valueOf(jObject.get("editorSeq"));
+
+        System.out.println("editorSeq 정보: ----------" + editorSeq);
+      
+        try {       
+        
+            /* START */
+            EditorRepository.deleteById(Integer.parseInt(editorSeq));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+    }
 }
