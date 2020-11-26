@@ -51,18 +51,10 @@ public class AlarmRecvService {
     while(keys.hasNext()) {
       String key = keys.next().toString();
       
-      if(key.equals("alarm_seq")) 
-      {
-        alarmSeq = Integer.parseInt(form.get("alarm_seq").toString());
-      }
-      else if(key.equals("user_id"))
-      {
-        userId = form.get("user_id").toString();
-      }
-      else if(key.equals("receiveYn")) 
-      {
-        receiveYn = form.get("receive_yn").toString().charAt(0);
-      } else {
+      if(key.equals("alarmSeq")) alarmSeq = Integer.parseInt(form.get("alarmSeq").toString());
+      else if(key.equals("userId")) userId = form.get("userId").toString();
+      else if(key.equals("receiveYn")) receiveYn = form.get("receiveYn").toString().charAt(0);
+      else {
         map.put("err_cd", "-11000");
         return map;
       }
@@ -136,8 +128,8 @@ public class AlarmRecvService {
   public Map<String, String> remove(JSONObject form) {
     Map<String, String> result = new HashMap<>();
     try{
-      int seq = Integer.parseInt(form.get("alarm_seq").toString());
-      String userId = form.get("user_id").toString();
+      int seq = Integer.parseInt(form.get("alarmSeq").toString());
+      String userId = form.get("userId").toString();
       logger.info("param : ["+seq+"]["+userId+"]");
     
       alarmRecvRepository.deleteByAlarmSeqAndUserId(seq, userId);
@@ -160,20 +152,20 @@ public class AlarmRecvService {
     SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
     try {
       if(service.equals("create") || service.equals("modify") || service.equals("remove")) {
-        alarmRecv.setAlarmSeq(Integer.parseInt(form.get("alarm_seq").toString()));
-        alarmRecv.setUserId(form.get("user_id").toString());
+        alarmRecv.setAlarmSeq(Integer.parseInt(form.get("alarmSeq").toString()));
+        alarmRecv.setUserId(form.get("userId").toString());
       }
 
       if(service.equals("create")) {
-        alarmRecv.setHpNo(form.get("hp_no").toString());
+        alarmRecv.setHpNo(form.get("hpNo").toString());
         alarmRecv.setReceiveYn('N');
         alarmRecv.setRegDate(new Date());
         alarmRecv.setModDate(new Date());
       }
 
       if(service.equals("modify")) {
-        alarmRecv.setHpNo(form.get("hp_no").toString());
-        alarmRecv.setReceiveYn(form.get("receive_yn") != null ? form.get("receive_yn").toString().charAt(0) : 'N');
+        alarmRecv.setHpNo(form.get("hpNo").toString());
+        alarmRecv.setReceiveYn(form.get("receiveYn") != null ? form.get("receiveYn").toString().charAt(0) : 'N');
         alarmRecv.setModDate(new Date());
         alarmRecv.setReceiveDate(new Date());
       }

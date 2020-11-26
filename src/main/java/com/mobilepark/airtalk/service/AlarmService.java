@@ -39,10 +39,11 @@ public class AlarmService {
     Alarm alarm = new Alarm();
     Set<String> likeSet = new HashSet<>();
 
-    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "user_id"))
-      alarm.setUserId(search);
-    else if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "code"))
+    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "userId")) {
+      alarm.setUserId(search); 
+    } else if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "code")) {
       alarm.setCode(search);     
+    }
 
     likeSet.add(type);
     return specificationService.like(likeSet, alarm);
@@ -62,26 +63,24 @@ public class AlarmService {
     String keyword = "";
     int start = 0;
     int length = 0;
-    
+    int total_cnt = count(form);
+
     Iterator<?> keys = form.keySet().iterator();
+    logger.info("key : " + keys.toString());
     while(keys.hasNext()) {
       String key = keys.next().toString();
-      logger.info("key : " + key);
-      if(key.equals("user_id") && !form.get(key).equals("")) {
-        type = "user_id";
-        keyword = form.get(key).toString();
-      } else if(key.equals("code") && !form.get(key).equals("")) {
-        type = "code";
-        keyword = form.get(key).toString();
-      } else if(key.equals("reserv_date") && !form.get(key).equals("")) {
-        type = "reserv_date";
-        keyword = form.get(key).toString();
-      } else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
-      else if(key.equals("length")) length = Integer.parseInt(form.get(key).toString());
-      // else {
-      //   map.put("err_cd", "-11000");
-      //   return map;
+      // if(!form.get(key).equals("") && !key.equals("start") && !key.equals("length")) {
+      //   type = key;
+      //   keyword = form.get(key).toString();
       // }
+      if(key.equals("type")) type = form.get(key).toString();
+      else if(key.equals("keyword")) keyword = form.get(key).toString();
+      else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
+      else if(key.equals("length")) length = Integer.parseInt(form.get(key).toString());
+      else {
+        type = key;
+        keyword = form.get(key).toString();
+      }
     }
 
     if(type.equals("")) {
@@ -95,10 +94,11 @@ public class AlarmService {
       PageRequest pageRequest = PageRequest.of(start, length);
 
       try {
-        list = alarmRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
+        Specification<Alarm> specs = this.getSpecification(type, keyword);
+        list = alarmRepository.findAll(specs, pageRequest).getContent();
         map.put("result", list);
         map.put("err_cd", "0000");
-        map.put("total_cnt", list.size());
+        map.put("total_cnt", total_cnt);
       } catch (Exception e) {
         map.put("err_cd", "-1000");
         e.printStackTrace();
@@ -107,7 +107,7 @@ public class AlarmService {
     } else {
       
       try {
-        if(type.equals("user_id")) list = alarmRepository.findByUserId(keyword);
+        if(type.equals("userId")) list = alarmRepository.findByUserId(keyword);
         if(type.equals("code")) list = alarmRepository.findByCode(keyword);
         // if(type.equals("reserv_date")) list = alarmRepository.findeByReservDate(keyword);
         map.put("result", list);
@@ -193,23 +193,19 @@ public class AlarmService {
    */
   public int count(JSONObject form) {
     int count = 0;
-
+    String type = "";
+    String keyword = "";
     Iterator<?> keys = form.keySet().iterator();
     while(keys.hasNext()) {
       String key = keys.next().toString();
-      if(key.equals("user_id")) count = alarmRepository.countByUserIdContaining(form.get(key).toString());
-      else if(key.equals("code")) count = alarmRepository.countByCodeContaining(form.get(key).toString());
+      if(key.equals("type")) type= form.get(key).toString();
+      if(key.equals("keyword")) keyword = form.get(key).toString();
     }
 
+    if(type.equals("userId")) count = alarmRepository.countByUserIdContaining(keyword);
+    else if(type.equals("code")) count = alarmRepository.countByCodeContaining(keyword);
+
     logger.info("Total Count1 : ["+count+"]");
-    // logger.info("user_id :" + form.get("user_id").toString() +" / code : " + form.get("code").toString());
-    // if(form.get("user_id").toString().equals("user_id")){
-    //   count = alarmRepository.countByUserIdContaining(form.get("user_id").toString());
-    //   logger.info("Total Count1 : ["+count+"]");
-    // } else if(form.get("code").toString().equals("code")) {
-    //   count = alarmRepository.countByCodeContaining(form.get("code").toString());
-    //   logger.info("Total Count2 : ["+count+"]");
-    // } 
 
     return count;
   }
@@ -225,27 +221,24 @@ public class AlarmService {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddmmss");
 
     if(service.equals("modify") || service.equals("remove")) {
-      System.out.println("modify + remove = seq");
       alarm.setSeq(Integer.parseInt(form.get("seq").toString()));
     }
     
     if(service.equals("modify") || service.equals("create")) {
-      System.out.println("modify + create = message, reservDate");
       alarm.setMessage(form.get("message").toString());
       try{
-      alarm.setReservDate(sdf.parse(form.get("reserv_date").toString()));
+      alarm.setReservDate(sdf.parse(form.get("reservDate").toString()));
       }catch (Exception e){
         e.printStackTrace();
       }
     } 
     
     if(service.equals("create")) {
-      System.out.println("create = userId, code, latitude, loginitudem, bdNm");
-      alarm.setUserId(form.get("user_id").toString());
+      alarm.setUserId(form.get("userId").toString());
       alarm.setCode(form.get("code").toString());
       alarm.setLatitude(new BigDecimal(form.get("latitude").toString()));
       alarm.setLongitude(new BigDecimal(form.get("longitude").toString()));
-      alarm.setBdNm(form.get("bd_nm") != null ? form.get("bd_nm").toString() : "");
+      alarm.setBdNm(form.get("bdNm") != null ? form.get("bdNm").toString() : "");
     }
     return alarm;
   }
