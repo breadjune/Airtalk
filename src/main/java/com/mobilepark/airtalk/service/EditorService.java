@@ -65,14 +65,16 @@ public class EditorService {
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
+        String editorSeq = String.valueOf(jObject.get("editorSeq"));
 
              try {
                 /* START */
-                // EditorRepository.findByUserId((String)jObject.get("adminId"));
+                EditorRepository.findById(Integer.parseInt(editorSeq));
                 Editor = new Editor();
+                Editor.setEditorSeq(Integer.parseInt(editorSeq));
+                Editor.setAdminId((String)jObject.get("adminId"));
                 Editor.setTitle((String)jObject.get("title"));
                 Editor.setContents((String)jObject.get("content"));
-                Editor.setAdminId((String)jObject.get("adminId"));
                 Editor.setModDate(new Date());
     
                 Editor = EditorRepository.save(Editor);
@@ -90,15 +92,15 @@ public class EditorService {
 
         JSONParser parser = new JSONParser();
         JSONObject jObject;
-
         jObject = (JSONObject) parser.parse(param);
-        int editorSeq = (int)jObject.get("editorSeq");
+        String editorSeq = String.valueOf(jObject.get("editorSeq"));
 
         System.out.println("editorSeq 정보: ----------" + editorSeq);
-
-        try {
+      
+        try {       
+        
             /* START */
-            EditorRepository.deleteById(editorSeq);
+            EditorRepository.deleteById(Integer.parseInt(editorSeq));
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

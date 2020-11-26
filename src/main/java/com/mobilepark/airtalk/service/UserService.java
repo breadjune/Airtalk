@@ -150,7 +150,7 @@ public class UserService {
         User user = new User();
         Set<String> likeSet = new HashSet<>();
     
-        if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "id")) {
+        if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "userId")) {
           logger.info("success service");
           user.setUserId(search);
           likeSet.add(type);
