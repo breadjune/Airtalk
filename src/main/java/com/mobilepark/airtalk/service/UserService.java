@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -102,27 +103,34 @@ public class UserService {
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
-        // if (UserRepository.findByUserId((String)jObject.get("id"))!=null){
-            try {
-                /* START */
-                UserRepository.findByUserId((String)jObject.get("id"));
-                User = new User();
-                User.setUserId((String)jObject.get("id"));
-                User.setName((String)jObject.get("name"));
-                User.setPassword((String)jObject.get("password"));
-                User.setHpNo((String)jObject.get("hpNo"));
-                User.setModDate(new Date());
+            if(UserRepository.findByPassword((String)jObject.get("bunpassword"))!=null) { 
+                //비밀번호 체크
+                 try {
+                     /* START */
+               
+                     UserRepository.findByUserId((String)jObject.get("id"));
+                     User = new User();
+                     User.setUserId((String)jObject.get("id"));
+                     User.setName((String)jObject.get("name"));
+                     if ((String)jObject.get("password")=="")
+                          User.setPassword((String)jObject.get("bunpassword"));
+                     else
+                         User.setPassword((String)jObject.get("password"));
+                        
+                    User.setHpNo((String)jObject.get("hpNo"));
+                    User.setModDate(new Date());
     
-                User = UserRepository.save(User);
-                return 0;
+                    User = UserRepository.save(User);
+                    return 0;
     
             } catch (Exception e) {
                 logger.error(e.getMessage());
                 return 1;
             }
-        // }
-        // else
-        // return 1;
+        } else 
+            return 3;
+
+              
         
     }
 
@@ -196,7 +204,6 @@ public class UserService {
         int count = 0;
         switch(form.get("type").toString()) {
           case "all":
-          System.out.println("all 타입 들어옴 : ----------");
             count = UserRepository.countByAll();
             break;
           case "userId":

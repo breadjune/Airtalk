@@ -115,12 +115,17 @@ public class UserController {
                 logger.error(e.getMessage());
                 result.put("result", "FAIL");
                 result.put("resultCode", "-1");
-           if(resultCode ==1) {
+            }  
+          if(resultCode ==1) {
             result.put("result", "FAIL");
             result.put("resultCode", "-1");
            }
-
-        }
+           else if(resultCode ==3) {
+            result.put("result", "PASSFAIL");
+            result.put("resultCode", "-3");
+           }
+       
+        System.out.println("리턴값 : " + result.toString());
         return result;
     }
 

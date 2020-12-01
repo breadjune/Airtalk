@@ -116,8 +116,10 @@ public class CodeService {
         int start = Integer.parseInt(form.get("start").toString());
         
         PageRequest pageRequest = PageRequest.of(start, length);
-
-        list = CodeRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
+        if (type == "all")
+            list = CodeRepository.findAll(pageRequest).getContent();
+        else
+            list = CodeRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
 
         return list;
     }
@@ -130,6 +132,9 @@ public class CodeService {
   public int count(JSONObject form) {
     int count = 0;
     switch(form.get("type").toString()) {
+      case "all":
+          count = CodeRepository.countByAll();
+        break;
       case "code":
         count = CodeRepository.countByCodeContaining(form.get("keyword").toString());
         break;
