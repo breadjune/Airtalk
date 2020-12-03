@@ -35,92 +35,118 @@ public class BoardService {
   @Autowired
   SpecificationService<Board> specificationService;
 
-  private Specification<Board> getSpecification(String type, String search, String bCode) {
-    
+  private Specification<Board> getSpecification(String bcode) {
     Board board = new Board();
     Set<String> likeSet = new HashSet<>();
+    board.setBcode(bcode); 
+    likeSet.add("bcode");
+    return specificationService.like(likeSet, board);
 
-    if(StringUtils.isNotEmpty(bCode) && StringUtils.equals(type, "bCode")) {
-      board.setBCode(bCode); 
-    }
-    
-    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "title")) {
-      board.setTitle(search);     
-    } else if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "writer")) {
+  }
+
+  private Specification<Board> getSpecificationSearch(String type, String search) {
+    Board board = new Board();
+    Set<String> likeSet = new HashSet<>();
+    if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "title"))
+      board.setTitle(search);
+    else if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "writer"))
       board.setWriter(search);
-    }
+
     likeSet.add(type);
     return specificationService.like(likeSet, board);
   }
 
-
   /**
-   * 알림 게시판 검색 조회
+   * 알림 게시판 조회
    * 
-   * @return List<Board>
+   * @return Map<String, List<Board>>
    */
   public Map<String, Object> list(JSONObject form) {
 
     List<Board> list = new ArrayList<>();
     Map<String, Object> map = new HashMap<>();
-    String bCode = "";
-    String type = "";
-    String keyword = "";
-    int start = 0;
-    int length = 0;
-    int total_cnt = count(form);
+    String bcode = form.get("bcode").toString();
+    int start = Integer.parseInt(form.get("start").toString());
+    int length = Integer.parseInt(form.get("length").toString());
+    int total_cnt = listCount(bcode);
 
-    Iterator<?> keys = form.keySet().iterator();
-    logger.info("key : " + keys.toString());
-    while(keys.hasNext()) {
-      String key = keys.next().toString();
-      if(key.equals("type")) type = form.get(key).toString();
-      else if(key.equals("keyword")) keyword = form.get(key).toString();
-      else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
-      else if(key.equals("length")) length = Integer.parseInt(form.get(key).toString());
-      else if(key.equals("bCode")) bCode = form.get(key).toString();
-      else {
-        type = key;
-        keyword = form.get(key).toString();
-      }
+    PageRequest pageRequest = PageRequest.of(start, length);
+    Specification<Board> bCodeSpecs = this.getSpecification(bcode);
+
+    try {
+      list = boardRepository.findAll(bCodeSpecs, pageRequest).getContent();
+      map.put("result", list);
+      map.put("err_cd", "0000");
+      map.put("total_cnt", total_cnt);
+    } catch (Exception e) {
+      map.put("err_cd", "-1000");
+      e.printStackTrace();
     }
 
-    if(type.equals("")) {
-      map.put("err_cd", "-11000");
-      return map;
+    logger.info("params : [start : "+start+"][length : "+length+"][bCode : "+bcode+"]");
+    
+    return map;
+  }
+
+  /**
+   * 알림 게시판 검색 조회
+   * 
+   * @return Map<String, List<Board>>
+   */
+  public Map<String, Object> search(JSONObject form) {
+    List<Board> list = new ArrayList<>();
+    Map<String, Object> map = new HashMap<>();
+    String bcode = form.get("bcode").toString();
+    String type = form.get("type").toString();
+    String keyword = form.get("keyword").toString();
+    int start = Integer.parseInt(form.get("start").toString());
+    int length = Integer.parseInt(form.get("length").toString());
+    int total_cnt = searchCount(bcode, type, keyword);
+
+    PageRequest pageRequest = PageRequest.of(start, length);
+    Specification<Board> bCodeSpecs = this.getSpecification(bcode);
+    Specification<Board> searchSpecs = this.getSpecificationSearch(type, keyword);
+
+    try {
+      list = boardRepository.findAll(bCodeSpecs.and(searchSpecs), pageRequest).getContent();
+      map.put("result", list);
+      map.put("err_cd", "0000");
+      map.put("total_cnt", total_cnt);
+    } catch (Exception e) {
+      map.put("err_cd", "-1000");
+      e.printStackTrace();
     }
-
-    logger.info("params : [type : "+type+"][keyword : "+keyword+"][start : "+start+"][length : "+length+"][bCode : "+bCode+"]");
-
-    if(length != 0) {
-      PageRequest pageRequest = PageRequest.of(start, length);
-
-      try {
-        Specification<Board> bCodeSpecs = this.getSpecification(type, keyword, bCode);
-        Specification<Board> KeywordSpecs = this.getSpecification(type, keyword, bCode);
-        list = boardRepository.findAll(bCodeSpecs.and(KeywordSpecs), pageRequest).getContent();
-        map.put("result", list);
-        map.put("err_cd", "0000");
-        map.put("total_cnt", total_cnt);
-      } catch (Exception e) {
-        map.put("err_cd", "-1000");
-        e.printStackTrace();
-      }
-    } else {
-      try {
-        if(type.equals("title")) list = boardRepository.findByBCodeAndTitle(bCode, keyword);
-        if(type.equals("writer")) list = boardRepository.findByBCodeAndWriter(bCode, keyword);
-        map.put("result", list);
-        map.put("err_cd", "0000");
-        map.put("total_cnt", list.size());
-      } catch (Exception e) {
-        map.put("err_cd", "-1000");
-        e.printStackTrace();
-      }
-    } 
 
     return map;
   }
+
+  //   if(length != 0) {
+  //     try {
+  //       // Specification<Board> bCodeSpecs = this.getSpecification(type, keyword, bcode);
+  //       Specification<Board> KeywordSpecs = this.getSpecificationSearch(type, keyword);
+  //       list = boardRepository.findAll(bCodeSpecs.and(KeywordSpecs), pageRequest).getContent();
+  //       map.put("result", list);
+  //       map.put("err_cd", "0000");
+  //       map.put("total_cnt", total_cnt);
+  //     } catch (Exception e) {
+  //       map.put("err_cd", "-1000");
+  //       e.printStackTrace();
+  //     }
+  //   } else {
+  //     try {
+  //       if(type.equals("title")) list = boardRepository.findByBcodeAndTitle(bcode, keyword);
+  //       if(type.equals("writer")) list = boardRepository.findByBcodeAndWriter(bcode, keyword);
+  //       map.put("result", list);
+  //       map.put("err_cd", "0000");
+  //       map.put("total_cnt", list.size());
+  //     } catch (Exception e) {
+  //       map.put("err_cd", "-1000");
+  //       e.printStackTrace();
+  //     }
+  //   } 
+
+  //   return map;
+  // }
 
   /**
    * 게시글 등록
@@ -191,26 +217,21 @@ public class BoardService {
    * 
    * @return Integer
    */
-  public int count(JSONObject form) {
-    int count = 0;
-    String type = "";
-    String keyword = "";
-    Iterator<?> keys = form.keySet().iterator();
-    while(keys.hasNext()) {
-      String key = keys.next().toString();
-      if(key.equals("type")) type= form.get(key).toString();
-      if(key.equals("keyword")) keyword = form.get(key).toString();
-    }
-
-    if(type.equals("userId")) count = boardRepository.countByBCodeAndTitleContaining(keyword);
-    else if(type.equals("code")) count = boardRepository.countByBCodeAndWriterContaining(keyword);
-    // else if(type.equals("code")) count = boardRepository.countByBCodeAndRegDateContaining(keyword);
-    
-    logger.info("Total Count1 : ["+count+"]");
-
+  public int listCount(String bcode) {
+    int count = boardRepository.countByBcode(bcode);
+    logger.info("list count : ["+count+"]");
     return count;
   }
 
+  public int searchCount(String bcode, String type, String keyword) {
+    int count = 0;
+    if(type.equals("title")) count = boardRepository.countByBcodeAndTitleContaining(bcode, keyword);
+    else if(type.equals("writer")) count = boardRepository.countByBcodeAndWriterContaining(bcode, keyword);
+
+    logger.info("search count : ["+count+"]");
+
+    return count;
+  }
   /**
    * 알림 서비스 파라미터
    * 

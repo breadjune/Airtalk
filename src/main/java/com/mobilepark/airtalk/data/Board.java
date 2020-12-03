@@ -18,7 +18,7 @@ import lombok.ToString;
 @Entity
 @Getter @Setter
 @ToString
-@Table(name ="TBL_BOARD_FILE")
+@Table(name ="TBL_BOARD")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Board {
     private Integer seq;
 
     @Column(name="B_CODE", nullable = false)
-    private String bCode;
+    private String bcode;
 
     @Column(name="TITLE", nullable = false)
     private String title;

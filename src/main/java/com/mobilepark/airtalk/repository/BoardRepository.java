@@ -10,8 +10,9 @@ import com.mobilepark.airtalk.data.Board;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Integer>, JpaSpecificationExecutor<Board> {
-    int countByBCodeAndTitleContaining(String keyword);
-    int countByBCodeAndWriterContaining(String keyword);
-    List<Board> findByBCodeAndTitle(String bCode, String keyword);
-    List<Board> findByBCodeAndWriter(String bCode, String keyword);
+    int countByBcode(String bcode);
+    int countByBcodeAndTitleContaining(String bcode, String keyword);
+    int countByBcodeAndWriterContaining(String bcode, String keyword);
+    List<Board> findByBcodeAndTitle(String bcode, String keyword);
+    List<Board> findByBcodeAndWriter(String bcode, String keyword);
 }

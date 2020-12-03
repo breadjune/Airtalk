@@ -26,16 +26,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Controller
-@RequestMapping("/rest/board")
+@RequestMapping("/restapi/board")
 public class BoardController {
     private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
     
     @Autowired
     public BoardService boardService;
 
-    @RequestMapping(value="/search.json",method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> search (Model model, @RequestBody JSONObject form) {
+    @RequestMapping(value="/list",method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> list (Model model, @RequestBody JSONObject form) {
         Map<String, Object> map = boardService.list(form);
+        return map;
+    }
+
+    @RequestMapping(value="/search",method = RequestMethod.POST)
+    public @ResponseBody Map<String, Object> search (Model model, @RequestBody JSONObject form) {
+        Map<String, Object> map = boardService.search(form);
         return map;
     }
 
