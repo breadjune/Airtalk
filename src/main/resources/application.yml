@@ -17,6 +17,11 @@ server:
     basedir: .
 
 spring:
+  servlet:
+    multipart:
+      location: /Users/atingle/vscode_workspace/upload
+      max-file-size: 100MB
+      max-request-size: 100MB
   main:
     allow-bean-definition-overriding: true
   devtools:

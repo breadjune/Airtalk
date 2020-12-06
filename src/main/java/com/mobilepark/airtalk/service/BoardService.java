@@ -1,5 +1,7 @@
 package com.mobilepark.airtalk.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.mobilepark.airtalk.data.Alarm;
+import com.mobilepark.airtalk.data.FileData;
 import com.mobilepark.airtalk.data.Board;
 import com.mobilepark.airtalk.repository.BoardRepository;
+import com.mobilepark.airtalk.repository.FileRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
@@ -23,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Service
 public class BoardService {
@@ -31,6 +36,9 @@ public class BoardService {
 
   @Autowired
   public BoardRepository boardRepository;
+
+  @Autowired
+  public FileRepository fileRepository;
   
   @Autowired
   SpecificationService<Board> specificationService;
@@ -120,56 +128,55 @@ public class BoardService {
     return map;
   }
 
-  //   if(length != 0) {
-  //     try {
-  //       // Specification<Board> bCodeSpecs = this.getSpecification(type, keyword, bcode);
-  //       Specification<Board> KeywordSpecs = this.getSpecificationSearch(type, keyword);
-  //       list = boardRepository.findAll(bCodeSpecs.and(KeywordSpecs), pageRequest).getContent();
-  //       map.put("result", list);
-  //       map.put("err_cd", "0000");
-  //       map.put("total_cnt", total_cnt);
-  //     } catch (Exception e) {
-  //       map.put("err_cd", "-1000");
-  //       e.printStackTrace();
-  //     }
-  //   } else {
-  //     try {
-  //       if(type.equals("title")) list = boardRepository.findByBcodeAndTitle(bcode, keyword);
-  //       if(type.equals("writer")) list = boardRepository.findByBcodeAndWriter(bcode, keyword);
-  //       map.put("result", list);
-  //       map.put("err_cd", "0000");
-  //       map.put("total_cnt", list.size());
-  //     } catch (Exception e) {
-  //       map.put("err_cd", "-1000");
-  //       e.printStackTrace();
-  //     }
-  //   } 
-
-  //   return map;
-  // }
-
   /**
    * 게시글 등록
    * 
    * @return Map<String, String>
    */
-  // public Map<String, String> create(JSONObject form) {
-  //   Map<String, String> result = new HashMap<>();
-  //   try {
-  //     Board board = this.getParameter(form, "create");
-  //     board.setRegDate(new Date());
-  //     logger.info("params : [userId : "+board.getBCode()+"][message : "+board.getTitle()+"][code : "+board.getWriter()+"]"+
-  //                        "[latitude : "+board.getContents()+"][longitude : "+board.getRegDate()+"[bdNm : "+board.getModDate()+"]");
+  public Map<String, String> create(MultipartFile files, Board board) {
+    FileData fileData = new FileData();
+    Map<String, String> result = new HashMap<>();
+    // List<String> list = new ArrayList<>();
+    try {
+      board.setRegDate(new Date());
+      logger.info("create board seq : " + board.getSeq());
+      board = boardRepository.save(board);
+      boardRepository.flush();
+      logger.info("params : [getSeq : "+board.getSeq()+"][getTitle : "+board.getTitle()+"][getWriter : "+board.getWriter()+"][getBcode : "+board.getBcode()+"]"+
+                         "[getContents : "+board.getContents()+"][getRegDate : "+board.getRegDate()+"[getModDate : "+board.getModDate()+"]");
 
-    
-  //     boardRepository.save(board);
-  //     result.put("err_cd", "0000");
-  //   } catch (Exception e) {
-  //     result.put("err_cd", "-1000");
-  //     e.getStackTrace();
-  //   }
-  //   return result;
-  // }
+      if(files != null) {
+        String originalFileName = files.getOriginalFilename();
+        String newFileName = originalFileName + System.currentTimeMillis();
+        File dest = new File(System.getProperty("user.home")+"/vscode_workspace/upload/" + newFileName);
+        files.transferTo(dest);
+
+        fileData.setSeq(board.getSeq());
+        fileData.setBCode(board.getBcode());
+        fileData.setRealFileName(originalFileName);
+        fileData.setNewFileName(newFileName);
+        fileData.setRegDate(new Date());
+        fileData.setModDate(new Date());
+        
+        fileRepository.save(fileData);
+      }
+
+    } catch (IllegalStateException e) {
+      logger.info("잘못된 인자");
+      e.printStackTrace();
+    } catch (IOException e) {
+      logger.info("파일 입출력 에러");
+      e.printStackTrace();
+    }
+    try { 
+      boardRepository.save(board);
+      result.put("err_cd", "0000");
+    } catch (Exception e) {
+      result.put("err_cd", "-1000");
+      e.getStackTrace();
+    }
+    return result;
+  }
 
   /**
    * 게시글 수정
@@ -179,7 +186,6 @@ public class BoardService {
   // public Map<String, String> modify(JSONObject form) {
   //   Map<String, String> result = new HashMap<>();
   //   try {
-  //     Board board = this.getParameter(form, "modify");
   //     logger.info("params : [seq : "+board.getSeq()+"][bCode : "+board.getBCode()+"]"+
   //     "[title : "+board.getTitle()+"][contents : "+board.getContents()+"]"+
   //     "[regDate : "+board.getRegDate()+"]");
@@ -197,20 +203,19 @@ public class BoardService {
    * 
    * @return Map<String, String>
    */
-  // public Map<String, String> remove(JSONObject form) {
-  //   Map<String, String> result = new HashMap<>();
-  //   try {
-  //   Board board = this.getParameter(form, "remove");
-  //   logger.info("params : [seq : "+board.getSeq()+"]");
+  public Map<String, String> delete(Board board) {
+    Map<String, String> result = new HashMap<>();
+    try {
+    logger.info("params : [seq : "+board.getSeq()+"][bcode : "+board.getBcode()+"]");
 
-  //     boardRepository.deleteById(board.getSeq());
-  //     result.put("err_cd", "0000");
-  //   } catch (Exception e) {
-  //     result.put("err_cd", "-1000");
-  //     e.getStackTrace();
-  //   }
-  //   return result;
-  // }
+      boardRepository.deleteById(board.getSeq());
+      result.put("err_cd", "0000");
+    } catch (Exception e) {
+      result.put("err_cd", "-1000");
+      e.getStackTrace();
+    }
+    return result;
+  }
 
   /**
    * 알림 게시판 검색 카운트 조회
@@ -265,5 +270,12 @@ public class BoardService {
   //   }
   //   return alarm;
   // }
+
+  public Map<String, String> getfileName(FileData fileData) {
+    fileData = fileRepository.findBySeq(fileData.getSeq());
+    Map<String, String> map = new HashMap<>();
+    map.put("fileName", fileData.getRealFileName());
+    return map;
+  }
 
 }

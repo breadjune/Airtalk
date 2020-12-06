@@ -5,15 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.mobilepark.airtalk.data.Board;
+import com.mobilepark.airtalk.data.FileData;
 import com.mobilepark.airtalk.service.BoardService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Controller
@@ -45,23 +49,40 @@ public class BoardController {
         return map;
     }
 
-    // @RequestMapping(value="/create.json",method = RequestMethod.POST)
-    // public @ResponseBody Map<String, Object> create (Model model, MultipartHttpServletRequest req, Board board) {
-    //     Map<String, Object> map = boardService.create(req, board);
-    //     return map;
+    @RequestMapping(value="/create",method = RequestMethod.POST)
+    public @ResponseBody Map<String, String> create (Model model, @RequestParam(value = "files") MultipartFile files, Board board) throws Exception {
+        
+        // for(MultipartFile file : files) {
+        //     logger.info("file original name : " + file.getOriginalFilename());
+        //     logger.info("files name : " + file.getName());
+        // }
+        logger.info("files original name : " + files.getOriginalFilename());
+        logger.info("files name : " + files.getName());
+        logger.info(board.getTitle());
+        logger.info(board.getWriter());
+        logger.info(board.getContents());
+        Map<String, String> map = boardService.create(files, board);
+        // Map<String, String> map = new HashMap<>();
+        // map.put("result", "success");
+        return map;
+    }
 
-    // }
+    @RequestMapping(value="/modify",method = RequestMethod.POST)
+    public @ResponseBody Map<String, String> modify (Model model, @RequestParam(value = "files") MultipartFile files, Board board) throws Exception {
+        Map<String, String> map = boardService.create(files, board);
+        return map;
+    }
 
-    // @RequestMapping(value="/update.json",method = RequestMethod.POST)
-    // public @ResponseBody Map<String, Object> update (Model model, @RequestBody JSONObject form) {
-    //     Map<String, Object> map = boardService.update(form);
-    //     return map;
-    // }
+    @RequestMapping(value="/delete",method = RequestMethod.POST)
+    public @ResponseBody Map<String, String> delete (Model model, Board board) {
+        Map<String, String> map = boardService.delete(board);
+        return map;
+    }
 
-    // @RequestMapping(value="/delete.json",method = RequestMethod.POST)
-    // public @ResponseBody Map<String, Object> delete (Model model, @RequestBody JSONObject form) {
-    //     Map<String, Object> map = boardService.delete(form);
-    //     return map;
-    // }
+    @RequestMapping(value="/fileNameInfo",method = RequestMethod.POST)
+    public @ResponseBody Map<String, String> getfileName (Model model, FileData fildata) {
+        Map<String, String> map = boardService.getfileName(fildata);
+        return map;
+    }
 
 }
