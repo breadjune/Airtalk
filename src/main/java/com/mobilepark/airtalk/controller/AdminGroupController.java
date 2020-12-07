@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -243,5 +244,16 @@ public class AdminGroupController {
         }
         return result;
     }
+
+    @RequestMapping(value="/search",method = RequestMethod.POST)
+    public @ResponseBody List<AdminGroup> search (Model model, @RequestBody JSONObject form, Pageable pageable) {
+      return authGroupService.search(form);
+  
+    }
+    @RequestMapping(value="/count",method = RequestMethod.POST)
+    public @ResponseBody int count (Model model, @RequestBody JSONObject form) { 
+        
+        return authGroupService.count(form);
+  }
 
 }

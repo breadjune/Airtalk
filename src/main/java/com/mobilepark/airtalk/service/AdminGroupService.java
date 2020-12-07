@@ -8,13 +8,19 @@ import com.mobilepark.airtalk.repository.AdminGroupAuthRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AdminGroupService {
@@ -25,6 +31,9 @@ public class AdminGroupService {
 
     @Autowired
     AdminGroupAuthRepository adminGroupAuthRepository;
+
+    @Autowired
+    SpecificationService<AdminGroup> specificationService;
 
     @Autowired
     MenuService menuService;
@@ -158,29 +167,6 @@ public class AdminGroupService {
         return adminGroupAuthList;
     }
 
-    // private void menuCheck(List<AdminGroupAuth> target, Menu menu, List<AdminGroupAuth> source) {
-    //     try {
-    //         AdminGroupAuth adminGroupAuth = new AdminGroupAuth();
-    //         String menuAuth = "N";
-
-    //         for(int i=0; i<source.size(); i++) {
-    //             if(menu.getMenuSeq() == source.get(i).getMenuSeq()) {
-    //                 menuAuth = source.get(i).getAuth();
-
-    //                 break;
-    //             }
-    //         }
-
-    //         adminGroupAuth.setMenuSeq(menu.getMenuSeq());
-    //         adminGroupAuth.setAuth(menuAuth);
-    //         adminGroupAuth.setMenu(menu);
-
-    //         target.add(adminGroupAuth);
-    //     } catch(Exception e) {
-    //         logger.error(e.getMessage());
-    //     }
-    // }
-
     private void adminGroupAuthChange(Integer adminGroupSeq, String arrayAuth, String menuSeq) {
         try {
             AdminGroupAuth adminGroupAuth = null;
@@ -209,4 +195,70 @@ public class AdminGroupService {
             logger.error(e.getMessage());
         }
     }
+
+    private Specification<AdminGroup> getSpecification(String type, String search) {
+    
+        AdminGroup AdminGroup = new AdminGroup();
+        Set<String> likeSet = new HashSet<>();
+    
+        if(StringUtils.isNotEmpty(search) && StringUtils.equals(type, "name")) {
+          logger.info("success service");
+          AdminGroup.setName(search);
+          likeSet.add(type);
+        }
+        else{
+            logger.info("success service");
+            AdminGroup.setDescription(search);
+            likeSet.add(type);
+        }
+    
+        return specificationService.like(likeSet, AdminGroup);
+      }
+    
+        /**
+         * 검색 조회
+         * 
+         * @return List<Code>
+         */
+        public List<AdminGroup> search(JSONObject form) {
+    
+            List<AdminGroup> list = new ArrayList<>();
+    
+            String type = form.get("type").toString();
+            String keyword = form.get("keyword").toString();
+            int length = Integer.parseInt(form.get("length").toString());
+            int start = Integer.parseInt(form.get("start").toString());
+
+            PageRequest pageRequest = PageRequest.of(start, length);
+            if (type == "all")
+                list = authGroupRepository.findAll(pageRequest).getContent();
+            else
+                list = authGroupRepository.findAll(this.getSpecification(type, keyword), pageRequest).getContent();
+    
+            return list;
+        }
+    
+        /**
+         * 검색 카운트 조회
+         * 
+         * @return Integer
+         */
+      public int count(JSONObject form) {
+        int count = 0;
+        switch(form.get("type").toString()) {
+          case "all":
+            count = authGroupRepository.countByAll();
+            break;
+          case "name":
+            count = authGroupRepository.countByNameContaining(form.get("keyword").toString());
+            break;
+          case "description":
+            count = authGroupRepository.countByDescriptionContaining(form.get("keyword").toString());
+            break;
+        } 
+        logger.info("Total Count : ["+count+"]");
+        return count;
+
+      }
+    
 }

@@ -5,6 +5,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import java.util.List;
 
@@ -26,10 +29,11 @@ public class AdminGroup {
 
     @Column(name="DESCRIPTION")
     private String description;
-
+    
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", columnDefinition = "DATETIME", updatable = false)
     private Date regDate;
-
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="MOD_DATE", columnDefinition = "DATETIME")
     private Date modDate;
 
