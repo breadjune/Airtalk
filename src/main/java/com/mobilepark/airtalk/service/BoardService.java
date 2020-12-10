@@ -133,10 +133,7 @@ public class BoardService {
    * 
    * @return Map<String, String>
    */
-  public Map<String, String> create(MultipartFile files, Board board) {
-    FileData fileData = new FileData();
-    Map<String, String> result = new HashMap<>();
-    // List<String> list = new ArrayList<>();
+  public Board create(Board board) {
     try {
       board.setRegDate(new Date());
       logger.info("create board seq : " + board.getSeq());
@@ -145,37 +142,13 @@ public class BoardService {
       logger.info("params : [getSeq : "+board.getSeq()+"][getTitle : "+board.getTitle()+"][getWriter : "+board.getWriter()+"][getBcode : "+board.getBcode()+"]"+
                          "[getContents : "+board.getContents()+"][getRegDate : "+board.getRegDate()+"[getModDate : "+board.getModDate()+"]");
 
-      if(files != null) {
-        String originalFileName = files.getOriginalFilename();
-        String newFileName = originalFileName + System.currentTimeMillis();
-        File dest = new File(System.getProperty("user.home")+"/vscode_workspace/upload/" + newFileName);
-        files.transferTo(dest);
-
-        fileData.setSeq(board.getSeq());
-        fileData.setBCode(board.getBcode());
-        fileData.setRealFileName(originalFileName);
-        fileData.setNewFileName(newFileName);
-        fileData.setRegDate(new Date());
-        fileData.setModDate(new Date());
-        
-        fileRepository.save(fileData);
-      }
 
     } catch (IllegalStateException e) {
       logger.info("잘못된 인자");
       e.printStackTrace();
-    } catch (IOException e) {
-      logger.info("파일 입출력 에러");
-      e.printStackTrace();
     }
-    try { 
-      boardRepository.save(board);
-      result.put("err_cd", "0000");
-    } catch (Exception e) {
-      result.put("err_cd", "-1000");
-      e.getStackTrace();
-    }
-    return result;
+    
+    return board;
   }
 
   /**
@@ -237,45 +210,45 @@ public class BoardService {
 
     return count;
   }
-  /**
-   * 알림 서비스 파라미터
-   * 
-   * @return Alarm
-   */
-  // public Board getParameter(JSONObject form, String service) {
-    
-  //   Board board = new Board();
-  //   SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddmmss");
-
-  //   if(service.equals("modify") || service.equals("remove")) {
-  //     board.setSeq(Integer.parseInt(form.get("seq").toString()));
-  //     board.setBCode(form.get("seq").toString());
-  //   }
-    
-  //   if(service.equals("modify") || service.equals("create")) {
-  //     board.setMessage(form.get("message").toString());
-  //     try{
-  //       board.setReservDate(sdf.parse(form.get("reservDate").toString()));
-  //     }catch (Exception e){
-  //       e.printStackTrace();
-  //     }
-  //   } 
-    
-  //   if(service.equals("create")) {
-  //     alarm.setUserId(form.get("userId").toString());
-  //     alarm.setCode(form.get("code").toString());
-  //     alarm.setLatitude(new BigDecimal(form.get("latitude").toString()));
-  //     alarm.setLongitude(new BigDecimal(form.get("longitude").toString()));
-  //     alarm.setBdNm(form.get("bdNm") != null ? form.get("bdNm").toString() : "");
-  //   }
-  //   return alarm;
-  // }
 
   public Map<String, String> getfileName(FileData fileData) {
     fileData = fileRepository.findBySeq(fileData.getSeq());
     Map<String, String> map = new HashMap<>();
-    map.put("fileName", fileData.getRealFileName());
+    String fileName = "";
+    try {
+      fileName = fileData.getRealFileName();
+    } catch(Exception e) {
+      fileName = "none";
+    }
+    map.put("fileName", fileName);
     return map;
+  }
+
+  public String upload(int seq, String bcode, MultipartFile files) throws IOException{
+      FileData fileData = new FileData();
+      String originalFileName = files.getOriginalFilename();
+      String newFileName = originalFileName + System.currentTimeMillis();
+      File dest = new File(System.getProperty("user.home")+"/upload/" + newFileName);
+      files.transferTo(dest);
+
+      fileData.setSeq(seq);
+      fileData.setBCode(bcode);
+      fileData.setRealFileName(originalFileName);
+      fileData.setNewFileName(newFileName);
+      fileData.setRegDate(new Date());
+      fileData.setModDate(new Date());
+      
+      fileRepository.save(fileData);
+
+      return "sucess";
+  }
+
+  public String download(int seq) {
+    logger.info("seq : " + seq);
+    FileData fileData = fileRepository.findBySeq(seq);
+    String fullPath = System.getProperty("user.home")+"/upload/"+fileData.getNewFileName();
+    logger.info("fullPath : " + fullPath);
+    return fullPath;
   }
 
 }
