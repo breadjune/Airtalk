@@ -194,12 +194,19 @@ public class AdminGroupController {
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
-           
-            String authGroupSeq = (String)jObject.get("authGroupSeq"); 
+            System.out.println(" authGroupSeq : " + String.valueOf(jObject.get("authGroupSeq")));
+            System.out.println(" gname : " + (String)jObject.get("gname"));
+            System.out.println(" userGroup : " + (String)jObject.get("userGroup"));
+
+
+            String authGroupSeq = String.valueOf(jObject.get("authGroupSeq")); 
             String gname = (String)jObject.get("gname"); 
             String userGroup = (String)jObject.get("userGroup"); 
             Object auth = jObject.get("auth");
             Object menuSeq = jObject.get("menuSeq");
+
+
+           
 
               //UPDATE 정보 전달
             try {
@@ -229,7 +236,7 @@ public class AdminGroupController {
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
-            String authGroupSeq = (String)jObject.get("authGroupSeq"); 
+            String authGroupSeq = String.valueOf(jObject.get("authGroupSeq")); 
               //DELETE 정보 전달
             try {
                 authGroupService.delete(Integer.parseInt(authGroupSeq));

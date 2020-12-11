@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User , String> , JpaSpecif
    List<User> findByUserIdContaining(String keyword, PageRequest pageRequest);
 
    public User findByUserId(String userId);
-   public User findByPassword(String password);
+   public User findByPasswordAndUserId(String password , String userId);
 
    @Query(value = "SELECT COUNT(*) FROM TBL_USER", nativeQuery = true)
    int countByAll();

@@ -103,7 +103,7 @@ public class UserService {
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
-            if(UserRepository.findByPassword((String)jObject.get("bunpassword"))!=null) { 
+            if(UserRepository.findByPasswordAndUserId((String)jObject.get("bunpassword"),(String)jObject.get("id") )!=null) { 
                 //비밀번호 체크
                  try {
                      /* START */
