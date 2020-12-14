@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang3.StringUtils;
@@ -115,7 +116,7 @@ public class CodeService {
         int length = Integer.parseInt(form.get("length").toString());
         int start = Integer.parseInt(form.get("start").toString());
         
-        PageRequest pageRequest = PageRequest.of(start, length);
+        PageRequest pageRequest = PageRequest.of(start, length, Sort.by("regDate")) ;
         if (type == "all")
             list = CodeRepository.findAll(pageRequest).getContent();
         else

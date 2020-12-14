@@ -23,6 +23,7 @@ import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -112,7 +113,7 @@ public class UserService {
                      User = new User();
                      User.setUserId((String)jObject.get("id"));
                      User.setName((String)jObject.get("name"));
-                     if ((String)jObject.get("password")=="")
+                     if (String.valueOf(jObject.get("password")).equals(""))
                           User.setPassword((String)jObject.get("bunpassword"));
                      else
                          User.setPassword((String)jObject.get("password"));
@@ -186,7 +187,7 @@ public class UserService {
             int length = Integer.parseInt(form.get("length").toString());
             int start = Integer.parseInt(form.get("start").toString());
 
-            PageRequest pageRequest = PageRequest.of(start, length);
+            PageRequest pageRequest = PageRequest.of(start, length ,Sort.by("regDate"));
             if (type == "all")
                 list = UserRepository.findAll(pageRequest).getContent();
             else

@@ -229,7 +229,7 @@ public class AdminGroupService {
             int length = Integer.parseInt(form.get("length").toString());
             int start = Integer.parseInt(form.get("start").toString());
 
-            PageRequest pageRequest = PageRequest.of(start, length);
+            PageRequest pageRequest = PageRequest.of(start, length, Sort.by("regDate"));
             if (type == "all")
                 list = authGroupRepository.findAll(pageRequest).getContent();
             else
