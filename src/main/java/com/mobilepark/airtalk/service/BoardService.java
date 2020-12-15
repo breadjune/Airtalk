@@ -2,7 +2,9 @@ package com.mobilepark.airtalk.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.mobilepark.airtalk.data.FileData;
 import com.mobilepark.airtalk.data.Board;
@@ -78,6 +82,8 @@ public class BoardService {
     int length = Integer.parseInt(form.get("length").toString());
     int total_cnt = listCount(bcode);
 
+    logger.info("params : [start : "+start+"][length : "+length+"][bCode : "+bcode+"]");
+
     PageRequest pageRequest = PageRequest.of(start, length);
     Specification<Board> bCodeSpecs = this.getSpecification(bcode);
 
@@ -91,7 +97,7 @@ public class BoardService {
       e.printStackTrace();
     }
 
-    logger.info("params : [start : "+start+"][length : "+length+"][bCode : "+bcode+"]");
+    
     
     return map;
   }
@@ -110,6 +116,8 @@ public class BoardService {
     int start = Integer.parseInt(form.get("start").toString());
     int length = Integer.parseInt(form.get("length").toString());
     int total_cnt = searchCount(bcode, type, keyword);
+
+    logger.info("params : [start : "+start+"][length : "+length+"][bcode : "+bcode+"][type : "+type+"][keyword : "+keyword+"][total_cnt : "+total_cnt+"]");
 
     PageRequest pageRequest = PageRequest.of(start, length);
     Specification<Board> bCodeSpecs = this.getSpecification(bcode);
@@ -224,22 +232,25 @@ public class BoardService {
     return map;
   }
 
-  public String upload(int seq, String bcode, MultipartFile files) throws IOException{
+  public String upload(int seq, MultipartFile files) throws IOException{
       FileData fileData = new FileData();
       String originalFileName = files.getOriginalFilename();
-      String newFileName = originalFileName + System.currentTimeMillis();
+      String fileName = originalFileName.substring(0, originalFileName.lastIndexOf(".") -1);
+      String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+      String newFileName = fileName + System.currentTimeMillis() + "." + extension;
       File dest = new File(System.getProperty("user.home")+"/upload/" + newFileName);
       files.transferTo(dest);
 
       fileData.setSeq(seq);
-      fileData.setBCode(bcode);
       fileData.setRealFileName(originalFileName);
       fileData.setNewFileName(newFileName);
-      fileData.setRegDate(new Date());
+      if(!fileRepository.existsById(seq)) {
+        fileData.setRegDate(new Date());
+      };
       fileData.setModDate(new Date());
       
       fileRepository.save(fileData);
-
+      
       return "sucess";
   }
 
@@ -251,4 +262,36 @@ public class BoardService {
     return fullPath;
   }
 
+  public String getBrowser(HttpServletRequest req) {
+    String header = req.getHeader("User-Agent");
+    if(header.indexOf("MSIE") > -1 || header.indexOf("Trident") > -1) return "MSIE";
+    else if(header.indexOf("Chrome") > -1) return "Chrome";
+    else if(header.indexOf("Opera") > -1) return "Opera";
+    return "Firefox";
+  }
+
+  public String getDisposition(String filename, String browser) throws UnsupportedEncodingException {
+    String dispositionPrefix = "attachment;filename=";
+    String encodedFilename = null;
+    if(browser.equals("MSIE")) {
+      encodedFilename = URLEncoder.encode(filename, "UTF-8").replaceAll("\\+","%20");
+    } else if(browser.equals("Firefox")) {
+      encodedFilename="\""+new String(filename.getBytes("UTF-8"),"8859_1")+ "\"";
+    } else if(browser.equals("Opera")) {
+      encodedFilename="\""+new String(filename.getBytes("UTF-8"),"8859_1")+ "\"";
+    } else if(browser.equals("Chrome")) {
+      StringBuilder sb = new StringBuilder();
+      for(int i = 0; i<filename.length(); i++) {
+        char c = filename.charAt(i);
+        if(c > '~') {
+          sb.append(URLEncoder.encode("" +c, "UTF-8"));
+          } else {
+              sb.append(c); 	
+        } //else
+      } //for
+      encodedFilename = sb.toString();
+      
+    } //else-if
+    return dispositionPrefix + encodedFilename;
+    }
 }
