@@ -1,7 +1,9 @@
 package com.mobilepark.airtalk.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +14,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.mobilepark.airtalk.data.Board;
 import com.mobilepark.airtalk.data.FileData;
@@ -24,11 +30,14 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,7 +71,7 @@ public class BoardController {
     public @ResponseBody Map<String, String> create (Board board) throws Exception {
         
         Map<String, String> map = new HashMap<>();
-        logger.info("["+board.getBcode()+"]["+board.getTitle()+"]["+board.getWriter()+"]["+board.getContents()+"]");
+        logger.info("["+board.getSeq()+"]["+board.getBcode()+"]["+board.getTitle()+"]["+board.getWriter()+"]["+board.getContents()+"]");
         board = boardService.create(board);
         map.put("seq", String.valueOf(board.getSeq()));
         return map;
@@ -75,56 +84,22 @@ public class BoardController {
         String result = "";
         logger.info("files original name : " + files.getOriginalFilename());
         logger.info("files name : " + files.getName());
-        logger.info("["+files.getName()+"]["+board.getBcode()+"]["+board.getTitle()+"]["+board.getWriter()+"]["+board.getContents()+"]");
+        logger.info("["+files.getName()+"]["+board.getSeq()+"]["+board.getBcode()+"]["+board.getTitle()+"]["+board.getWriter()+"]["+board.getContents()+"]");
         
         board = boardService.create(board);
-        result = boardService.upload(board.getSeq(), board.getBcode(), files);
+        result = boardService.upload(board.getSeq(), files);
         
         map.put("result", result);
         return map;
     }
 
-
-    // @RequestMapping(value="/create",method = RequestMethod.POST)
-    // public @ResponseBody Map<String, String> create (Model model, @RequestParam(value = "bcode") String bcode,
-    //                                                               @RequestParam(value = "files") MultipartFile files,
-    //                                                               @RequestParam(value = "title") String title,
-    //                                                               @RequestParam(value = "writer") String writer,
-    //                                                               @RequestParam(value = "contents") String contents) throws Exception {
-        
-    //     // for(MultipartFile file : files) {
-    //     //     logger.info("file original name : " + file.getOriginalFilename());
-    //     //     logger.info("files name : " + file.getName());
-    //     // }
-    //     Board board = new Board();
+    // @RequestMapping(value="/modify",method = RequestMethod.POST)
+    // public @ResponseBody Map<String, String> modify (Model model, @RequestParam(value = "files") MultipartFile files, Board board) throws Exception {
     //     Map<String, String> map = new HashMap<>();
-    //     String result = "";
-    //     logger.info("files original name : " + files.getOriginalFilename());
-    //     logger.info("files name : " + files.getName());
-    //     logger.info("["+files.getName()+"]["+bcode+"]["+title+"]["+writer+"]["+contents+"]");
-
-    //     board.setBcode(bcode);
-    //     board.setTitle(title);
-    //     board.setWriter(writer);
-    //     board.setContents(contents);
-        
-    //     if(files.isEmpty()) boardService.create(board);
-    //     else {
-    //         board = boardService.create(board);
-    //         result = boardService.upload(board.getSeq(), board.getBcode(), files);
-    //     }
-    //     // Map<String, String> map = new HashMap<>();
-    //     map.put("result", result);
+    //     boardService.create(board);
+    //     map.put("result", "sucess");
     //     return map;
     // }
-
-    @RequestMapping(value="/modify",method = RequestMethod.POST)
-    public @ResponseBody Map<String, String> modify (Model model, @RequestParam(value = "files") MultipartFile files, Board board) throws Exception {
-        Map<String, String> map = new HashMap<>();
-        boardService.create(board);
-        map.put("result", "sucess");
-        return map;
-    }
 
     @RequestMapping(value="/delete",method = RequestMethod.POST)
     public @ResponseBody Map<String, String> delete (Model model, Board board) {
@@ -138,32 +113,77 @@ public class BoardController {
         return map;
     }
     
-    @RequestMapping(value="/download",method = RequestMethod.POST)
-    public Map<String, String> upload (Model model, @RequestParam(value = "seq") int seq, 
-                                                    @RequestParam(value = "bcode") String bcode,
-                                                    @RequestParam(value = "files") MultipartFile files) throws IOException{
+    // @RequestMapping(value="/download",method = RequestMethod.POST)
+    // public Map<String, String> upload (Model model, @RequestParam(value = "seq") int seq, 
+    //                                                 @RequestParam(value = "files") MultipartFile files) throws IOException{
                                                         
-        String result = boardService.upload(seq, bcode, files);  
-        Map<String, String> map = new HashMap<>();       
-        map.put("result", "sucess");                                      
-    return map;
-                                                    
-    }
-    @RequestMapping(value="/download",method = RequestMethod.GET)
-    public ResponseEntity<Resource> download (Model model, @RequestParam(value = "seq") int seq) throws IOException{
-    
-        Path path = Paths.get(boardService.download(seq));
-        String contentType = Files.probeContentType(path);
+    //     String result = boardService.upload(seq, files);  
+    //     Map<String, String> map = new HashMap<>();       
+    //     map.put("result", result);          
 
-        if(contentType == null) {
-            contentType = "application/octet-stream";
+    // return map;        
+    // }
+
+    @RequestMapping(value="/download",method = RequestMethod.GET)
+    @ResponseBody
+    public void download (HttpServletRequest req, HttpServletResponse res , @RequestParam(value = "seq") int seq) throws IOException{
+    
+         String filePath = boardService.download(seq);
+        String browser = boardService.getBrowser(req);
+        File file = new File(filePath);
+        Resource rs = new UrlResource(file.toURI());
+        String disposition = boardService.getDisposition(rs.getFilename(), browser);
+
+        ServletOutputStream sos = null;
+        try(FileInputStream fis = new FileInputStream(file)) {
+            res.setHeader("Content-Disposition", disposition);
+            res.setContentType("application/octet-stream");
+            res.setHeader("Content-Transfer-Encoding", "binary");
+
+            sos = res.getOutputStream();
+
+            byte[] b = new byte[1024];
+            int data = 0;
+
+            while ((data = (fis.read(b, 0, b.length))) != -1) {
+                sos.write(b, 0, data);
+            }
+            sos.flush();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            if(sos != null) {
+                try {
+                    sos.close();
+                }  catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + path.getFileName().toString());
 
-        Resource resource = new InputStreamResource(Files.newInputStream(path));
+        // String filePath = boardService.download(seq);
 
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        // File file = new File(filePath);
+        // Resource rs = null;
+
+        // if(file.exists() && file.isFile()) {
+        //     res.setContentType("application/octet-stream; charset=utf-8");
+        //     String browser = boardService.getBrowser(req);
+
+        //     rs = new UrlResource(file.toURI());
+
+        //     String disposition = boardService.getDisposition(rs.getFilename(), browser);
+        //     res.setHeader("Content-Disposition", disposition);
+        //     res.setHeader("Content-Transfer-Encoding", "binary");
+        //     OutputStream out = res.getOutputStream();
+        //     FileInputStream fis = new FileInputStream(file);
+        //     FileCopyUtils.copy(fis, out);
+
+        //     if(fis != null) fis.close();
+        //     out.flush();
+        //     out.close();
+
+        // }
     }
 }
