@@ -2,22 +2,15 @@ package com.mobilepark.airtalk.data;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
-
 import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter @Setter
 // @ToString(exclude = {"adminList", "adminGroupAuthList"})
 @Table(name="TBL_ADMIN_GROUP")
 public class AdminGroup {
-
-    private static final long serialVersionUID = -2382480158604649420L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

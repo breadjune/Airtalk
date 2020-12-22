@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mobilepark.airtalk.data.User;
-import com.mobilepark.airtalk.data.UserAPI;
+import com.mobilepark.airtalk.repository.UserRepository;
 import com.mobilepark.airtalk.service.UserService;
 
 import org.json.simple.JSONObject;
@@ -17,10 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.*;
 
 @Controller
 @RequestMapping("/restapi/user")
@@ -62,11 +60,17 @@ public class UserController {
 
         HashMap<String, String> result = new HashMap<String, String>();
 
-        // CREATE 정보 전달
+        // CREATE 정보 전달 
         try {
-            userService.create(param);
-            result.put("result", "SUCCESS");
-            result.put("resultCode", "0");
+            String resultId = userService.create(param);
+            if(resultId.equals("SUCC")){
+                result.put("result", "SUCCESS");
+                result.put("resultCode", "0");
+            }
+            else{
+                result.put("result", "FAILID");
+                result.put("resultCode", "-2");
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.put("result", "FAIL");

@@ -5,6 +5,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.transaction.Transactional;
+import org.json.simple.parser.ParseException;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.mobilepark.airtalk.data.Admin;
@@ -46,31 +51,41 @@ public class AdminService {
     }
 
     // 계정 정보 수정
-    public String update(Admin admin) {
-        String result = "SUCCESS";
+    @Transactional
+    public int update(String param) throws ParseException {
+        Admin admin = null;
 
-        try {
-            Admin newAdminInfo = adminRepository.findByAdminId(admin.getAdminId());
-
-            newAdminInfo.setAdminId(admin.getAdminId());
-            newAdminInfo.setAdminName(newAdminInfo.getAdminName());
-            newAdminInfo.setAdminGroupSeq(admin.getAdminGroupSeq());
-            newAdminInfo.setPassword(admin.getPassword());
-            newAdminInfo.setPasswordUpdateDate(new Date());
-            newAdminInfo.setModDate(new Date());
-            newAdminInfo.setPhone(admin.getPhone());
-            newAdminInfo.setEmail(admin.getEmail());
-            newAdminInfo.setRegDate(newAdminInfo.getRegDate());
-
-            adminRepository.save(newAdminInfo);
-        }
-        catch (Exception e) {
-            logger.info("Error : " + e);
-            result = "FAIL";
-            return result;
-        }
-
-        return result;
+        JSONParser parser = new JSONParser();
+        JSONObject jObject;
+        jObject = (JSONObject) parser.parse(param);
+            if(adminRepository.findByPasswordAndAdminId((String)jObject.get("bunpassword"),(String)jObject.get("adminId") )!=null) { 
+                //비밀번호 체크
+                 try {
+                     /* START */
+                     admin = adminRepository.findByAdminId((String)jObject.get("adminId"));
+                     admin.setAdminId((String)jObject.get("adminId"));
+                     admin.setEmail((String)jObject.get("email"));
+                     admin.setAdminName((String)jObject.get("adminName"));
+                     admin.setAdminGroupSeq(Integer.parseInt(String.valueOf(jObject.get("adminGroupSeq"))));
+                     if (String.valueOf(jObject.get("password")).equals("")){
+                         admin.setPassword((String)jObject.get("bunpassword"));
+                     }
+                     else{
+                         admin.setPassword((String)jObject.get("password"));
+                         admin.setPasswordUpdateDate(new Date());
+                     }
+                        admin.setPhone((String)jObject.get("phone"));
+                        admin.setModDate(new Date());
+    
+                        admin = adminRepository.save(admin);
+                    return 0;
+    
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return 1;
+            }
+        } else 
+            return 3; 
     }
 
     // 계정 생성

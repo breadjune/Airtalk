@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.transaction.Transactional;
 import com.mobilepark.airtalk.data.User;
-import com.mobilepark.airtalk.data.UserAPI;
 import com.mobilepark.airtalk.repository.UserRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -57,26 +55,33 @@ public class UserService {
     }
 
     @Transactional
-    public void create(String param) throws ParseException {
+    public String create(String param) throws ParseException {
         User User = null;
 
         System.out.println("test 정보: " + param);
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
-        try {
-            /* START */
-            User = new User();
-            User.setUserId((String)jObject.get("id"));
-            User.setName((String)jObject.get("name"));
-            User.setPassword((String)jObject.get("password"));
-            User.setHpNo((String)jObject.get("hpNo"));
-            User.setRegDate(new Date());
 
-            User = UserRepository.save(User);
+        if(UserRepository.findByUserId((String)jObject.get("id"))==null){
+            try {
+             /* START */
+                User = new User();
+                User.setUserId((String)jObject.get("id"));
+                User.setName((String)jObject.get("name"));
+                User.setPassword((String)jObject.get("password"));
+                User.setHpNo((String)jObject.get("hpNo"));
+                User.setRegDate(new Date());
 
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+                User = UserRepository.save(User);
+                return "SUCC";
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
+        } 
+        else{
+            return "FAIL";
         }
     }
 
@@ -129,10 +134,7 @@ public class UserService {
                 return 1;
             }
         } else 
-            return 3;
-
-              
-        
+            return 3; 
     }
 
     @Transactional

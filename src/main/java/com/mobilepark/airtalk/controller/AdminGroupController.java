@@ -67,7 +67,6 @@ public class AdminGroupController {
             logger.info("searchWord : " + searchWord);
             logger.info("searchType : " + searchType);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
@@ -176,7 +175,6 @@ public class AdminGroupController {
                 result = "FAIL";
             }
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;
@@ -217,7 +215,6 @@ public class AdminGroupController {
                 result = "FAIL";
             }
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -246,7 +243,6 @@ public class AdminGroupController {
                 result = "FAIL";
             }
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;

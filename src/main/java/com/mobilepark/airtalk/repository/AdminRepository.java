@@ -20,7 +20,7 @@ public interface AdminRepository extends JpaRepository<Admin, String> ,JpaSpecif
     public long countByPhoneAndAdminNameAndEmail(String phone, String name, String email);
     public List<Admin> findByPhoneAndAdminNameAndEmail(String phone, String name, String email);
 
-
+    public Admin findByPasswordAndAdminId(String password , String adminId);
     int countByAdminIdContaining(String keyword);
     int countByAdminNameContaining(String keyword);
     List<Admin> findByAdminIdContaining(String keyword, PageRequest pageRequest);
