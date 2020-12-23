@@ -18,24 +18,21 @@ import lombok.ToString;
 @Entity
 @Getter @Setter
 @ToString
-@Table(name ="TBL_BOARD")
-public class Board {
+@Table(name ="TBL_COMMENT")
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="COMMENT_SEQ", nullable = false)
+    private Integer commentSeq;
+
     @Column(name="SEQ", nullable = false)
     private Integer seq;
 
-    @Column(name="B_CODE", nullable = false)
-    private String bcode;
+    @Column(name="ADMIN_ID", nullable = false)
+    private String adminId;
 
-    @Column(name="TITLE", nullable = false)
-    private String title;
-
-    @Column(name="WRITER", nullable = false)
-    private String writer;
-
-    @Column(name="CONTENTS", nullable = false)
-    private String contents;
+    @Column(name="COMMENT", nullable = false)
+    private String comment;
 
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", updatable=false, nullable = false)

@@ -52,6 +52,7 @@ public class LoginController {
         res.setHeader("authorization", token);
 
         map.put("name", admin.getAdminName());
+        map.put("id", admin.getAdminId());
         map.put("adminGroupSeq", String.valueOf(admin.getAdminGroupSeq()));
         map.put("errorCode", "0");
 
