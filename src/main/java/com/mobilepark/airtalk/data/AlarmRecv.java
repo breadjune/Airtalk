@@ -25,7 +25,6 @@ import lombok.ToString;
 
 @Entity
 @Getter @Setter
-@ToString
 @Table(name ="TBL_ALARM_RECEIVER")
 @IdClass(AlarmRecvPK.class)
 public class AlarmRecv {
@@ -57,6 +56,6 @@ public class AlarmRecv {
     private Date modDate;
 
     // @ManyToOne(targetEntity = Alarm.class)
-    // @JoinColumn(name = "SEQ", insertable = false)
+    // @JoinColumn(name = "alarm_seq", insertable = false)
     // private Alarm alarm;
 }

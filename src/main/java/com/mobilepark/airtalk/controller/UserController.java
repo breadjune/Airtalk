@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mobilepark.airtalk.data.User;
-import com.mobilepark.airtalk.repository.UserRepository;
 import com.mobilepark.airtalk.service.UserService;
 
 import org.json.simple.JSONObject;
@@ -82,15 +81,15 @@ public class UserController {
     /****************************
      * --------- 상세 정보 ---------
      ****************************/
-    @RequestMapping(value = "modify", method = RequestMethod.GET)
-    public @ResponseBody String modify(@RequestBody String param){
+    @RequestMapping(value = "view", method = RequestMethod.POST)
+    public @ResponseBody String view(@RequestBody String param){
         logger.info("데이터 정보 : " + param);
         HashMap<String,String> result = new HashMap<String,String>();
         String resultMod = new String();
         
          //CREATE 정보 전달
          try {
-            resultMod = userService.modify(param);
+            resultMod = userService.view(param);
          } catch(Exception e) {
             logger.error(e.getMessage());
             result.put("result", "FAIL");

@@ -89,7 +89,6 @@ public class AlarmService {
     }
 
     logger.info("params : [type : "+type+"][keyword : "+keyword+"][start : "+start+"][length : "+length+"]");
-
     if(length != 0) {
       PageRequest pageRequest = PageRequest.of(start, length);
 
@@ -236,11 +235,22 @@ public class AlarmService {
     if(service.equals("create")) {
       alarm.setUserId(form.get("userId").toString());
       alarm.setCode(form.get("code").toString());
-      alarm.setLatitude(new BigDecimal(form.get("latitude").toString()));
-      alarm.setLongitude(new BigDecimal(form.get("longitude").toString()));
+      alarm.setLatitude(Double.parseDouble(form.get("latitude").toString()));
+      alarm.setLongitude(Double.parseDouble(form.get("longitude").toString()));
       alarm.setBdNm(form.get("bdNm") != null ? form.get("bdNm").toString() : "");
     }
     return alarm;
   }
 
+  /**
+   * 알림 서비스 파라미터
+   * 
+   * @return List<Alarm>
+   */
+  public List<Alarm> position(double latitude, double longitude) {
+    
+    List<Alarm> list = alarmRepository.findByLatitudeAndLongitude(latitude, longitude);
+    
+    return list;
+  }
 }

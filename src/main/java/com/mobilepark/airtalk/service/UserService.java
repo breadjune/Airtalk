@@ -86,7 +86,7 @@ public class UserService {
     }
 
     @Transactional
-    public String modify(String param) throws ParseException {
+    public String view(String param) throws ParseException {
         System.out.println("test 정보: " + param);
         User User = null;
         JSONParser parser = new JSONParser();

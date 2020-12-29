@@ -43,10 +43,10 @@ public class Alarm {
     private String code;
 
     @Column(name="LATITUDE", nullable = false, updatable=false)
-    private BigDecimal latitude;
+    private Double latitude;
 
     @Column(name="LONGITUDE", nullable = false, updatable=false)
-    private BigDecimal longitude;
+    private Double longitude;
 
     @Column(name="BD_NM", updatable=false)
     private String bdNm;
@@ -63,8 +63,7 @@ public class Alarm {
     @Column(name="MOD_DATE", insertable = false)
     private Date modDate;
 
-
     // @OneToMany(mappedBy = "alarm", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    // private List<AlarmRecv> alarmRecvList;
+    // private List<AlarmRecv> alarmRecvs;
 
 }

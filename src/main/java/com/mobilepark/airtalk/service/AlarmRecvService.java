@@ -143,6 +143,24 @@ public class AlarmRecvService {
   }
 
   /**
+   * 수신자 존재 유무 확인
+   * 
+   * @return AlarmRecv
+   */
+  public boolean recvCheck(int seq, String receiverId) {
+    return alarmRecvRepository.existsByAlarmSeqAndUserId(seq, receiverId);
+  }
+
+  /**
+   * 수신자 정보 조회
+   * 
+   * @return AlarmRecv
+   */
+  public AlarmRecv recvInfo(int seq, String userId) {
+    return alarmRecvRepository.findByAlarmSeqAndUserId(seq, userId);
+  }
+
+  /**
    * 수신자 VO 세팅
    * 
    * @return AlarmRecv
