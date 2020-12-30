@@ -31,9 +31,9 @@ public class DialogController {
     public FCMService fcmService; 
 
     @RequestMapping(value="/create",method = RequestMethod.POST)
-    public @ResponseBody Map<String, String> create (@RequestBody JSONObject params) {
+    public @ResponseBody Map<String, Object> create (@RequestBody JSONObject params) {
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
         try {
             System.out.println("params : " + params);

@@ -253,4 +253,15 @@ public class AlarmService {
     
     return list;
   }
+
+  /**
+   * 알림 예약 리스트 조회
+   * 
+   * @return List<Alarm>
+   */
+  public List<Alarm> reservList() {
+    List<Alarm> list = alarmRepository.alarmReservPush();
+    logger.info("reserv list size : " + list.size());
+    return list;
+  }
 }
