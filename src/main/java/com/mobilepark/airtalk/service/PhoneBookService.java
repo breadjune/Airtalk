@@ -3,6 +3,7 @@ package com.mobilepark.airtalk.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
 @Service
 public class PhoneBookService {
     
-    private static final Logger logger = LoggerFactory.getLogger(BoardService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PhoneBookService.class);
 
     @Autowired
     public PhoneBookRepository phoneBookRepository;
@@ -31,7 +32,7 @@ public class PhoneBookService {
         int count = 0;
 
         try {
-            logger.info("params : " + params);
+            logger.info(" PhoneBook Create Params : " + params);
             logger.info("Array : " + params.get("data"));
             ObjectMapper mapper = new ObjectMapper();
             String jsonArray = mapper.writeValueAsString(params.get("data"));
@@ -63,13 +64,20 @@ public class PhoneBookService {
 
     public Map<String, Object> list(String userId) {
         Map<String, Object> map = new HashMap<>();
+        List<Map<String, Object>> dataList = new ArrayList<>();
         try {
-            logger.info("params : " + userId);
+            logger.info("PhoneBook List params : " + userId);
             List<PhoneBook> list = phoneBookRepository.findByUserId(userId);
+            for(int i=0; i < list.size(); i++) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("name", list.get(i).getName().toString());
+                data.put("phoneNumber", list.get(i).getPhoneNumber().toString());
+                dataList.add(data);
+            }
             map.put("err_cd", "0000");
             map.put("user_id", userId);
             map.put("count", list.size());
-            map.put("result", list);
+            map.put("result", dataList);
         } catch(Exception e) {
             map.put("err_cd", "-1000");
             e.printStackTrace();

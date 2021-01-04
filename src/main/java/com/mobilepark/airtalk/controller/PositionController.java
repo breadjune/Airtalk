@@ -41,7 +41,7 @@ public class PositionController {
         Map<String, String> map = new HashMap<>();
 
         try {
-            System.out.println("params : " + params);
+            System.out.println(" Position Params : " + params);
             // System.out.println("params : ["+form.get("userId").toString()+"]["+form.get("latitude").toString()+"]["+form.get("longitude").toString()+"]["+form.get("address").toString()+"]["+form.get("description").toString()+"]");
             
             // List<Alarm> alarmList = alarmService.position(Double.parseDouble(form.get("latitude").toString()), Double.parseDouble(form.get("longitude").toString()));
