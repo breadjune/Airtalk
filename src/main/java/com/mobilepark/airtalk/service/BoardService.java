@@ -234,9 +234,14 @@ public class BoardService {
       String fileName = originalFileName.substring(0, originalFileName.lastIndexOf(".") -1);
       String extension = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
       String newFileName = fileName + System.currentTimeMillis() + "." + extension;
-      File dest = new File(System.getProperty("user.home")+"/upload/" + newFileName);
-      files.transferTo(dest);
-
+      File folder = new File(System.getProperty("user.home")+"/upload");
+      if(!folder.exists()) {
+        try { folder.mkdir(); }
+        catch(Exception e) { e.getStackTrace(); }
+      } else {
+        File dest = new File(System.getProperty("user.home")+"/upload/" + newFileName);
+        files.transferTo(dest);
+      }
       fileData.setSeq(seq);
       fileData.setRealFileName(originalFileName);
       fileData.setNewFileName(newFileName);

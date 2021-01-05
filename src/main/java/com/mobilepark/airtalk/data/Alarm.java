@@ -66,4 +66,8 @@ public class Alarm {
     // @OneToMany(mappedBy = "alarm", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     // private List<AlarmRecv> alarmRecvs;
 
+    // @OneToMany(targetEntity = AlarmRecv.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // @JoinColumn(name = "alarm_seq", referencedColumnName = "seq")
+    // private List<AlarmRecv> alarmRecvs;
+
 }

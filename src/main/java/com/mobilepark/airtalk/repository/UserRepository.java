@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User , String> , JpaSpecif
    public User findByUserId(String userId);
    public User findByPasswordAndUserId(String password , String userId);
 
+   // boolean existsById(String id);
+
    @Query(value = "SELECT COUNT(*) FROM TBL_USER", nativeQuery = true)
    int countByAll();
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.mobilepark.airtalk.data.Notice;
 import com.mobilepark.airtalk.service.NoticeService;
-import com.mobilepark.airtalk.util.StringUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +28,7 @@ public class NoticeController {
     @RequestMapping(value = "/list",method = RequestMethod.GET)
     @ResponseBody
     public List<Notice> List(@RequestParam(value="type", required = false) String type, @RequestParam(value="search", required = false) String search){
-        System.out.println("Notice_List_api");
+        logger.info("Notice_List_api");
         System.out.println("search : " + search + " / type : " + type);
         if(StringUtils.isEmpty(search) || StringUtils.isEmpty(type)){
             System.out.println("search : '', type : ''");

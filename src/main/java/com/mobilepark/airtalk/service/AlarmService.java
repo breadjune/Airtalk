@@ -9,9 +9,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mobilepark.airtalk.data.Alarm;
+import com.mobilepark.airtalk.data.AlarmRecv;
+import com.mobilepark.airtalk.repository.AlarmRecvRepository;
 import com.mobilepark.airtalk.repository.AlarmRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +35,9 @@ public class AlarmService {
 
   @Autowired
   public AlarmRepository alarmRepository;
+
+  @Autowired
+  public AlarmRecvRepository alarmRecvRepository;
   
   @Autowired
   SpecificationService<Alarm> specificationService;
@@ -69,10 +77,6 @@ public class AlarmService {
     logger.info("key : " + keys.toString());
     while(keys.hasNext()) {
       String key = keys.next().toString();
-      // if(!form.get(key).equals("") && !key.equals("start") && !key.equals("length")) {
-      //   type = key;
-      //   keyword = form.get(key).toString();
-      // }
       if(key.equals("type")) type = form.get(key).toString();
       else if(key.equals("keyword")) keyword = form.get(key).toString();
       else if(key.equals("start")) start = Integer.parseInt(form.get(key).toString());
@@ -129,14 +133,42 @@ public class AlarmService {
   public Map<String, String> create(JSONObject form) {
     Map<String, String> result = new HashMap<>();
     try {
+      logger.info("params : ["+form+"]");
       Alarm alarm = this.getParameter(form, "create");
       alarm.setRegDate(new Date());
-      logger.info("params : [userId : "+alarm.getUserId()+"][message : "+alarm.getMessage()+"][code : "+alarm.getCode()+"]"+
+      logger.info("alarm VO : [userId : "+alarm.getUserId()+"][message : "+alarm.getMessage()+"][code : "+alarm.getCode()+"]"+
                          "[latitude : "+alarm.getLatitude()+"][longitude : "+alarm.getLongitude()+"[bdNm : "+alarm.getBdNm()+"]"+
                          "[reservDate : "+alarm.getReservDate()+"]");
 
-    
-      alarmRepository.save(alarm);
+      Alarm data = alarmRepository.save(alarm);
+
+      ObjectMapper mapper = new ObjectMapper();
+      String jsonArray = mapper.writeValueAsString(form.get("receiver"));
+      List<Map<String, String>> paramMap = new ObjectMapper().readValue(jsonArray, new TypeReference<List<Map<String, String>>>(){});
+      logger.info("alarm recv List params : " + paramMap.toString());
+      logger.info("alarm create seq : " + data.getSeq());
+      // List<AlarmRecv> recvList = new ArrayList<>();
+      for(int i=0; i < paramMap.size(); i++) {
+        AlarmRecv alarmRecv = new AlarmRecv();
+        alarmRecv.setAlarmSeq(data.getSeq());
+        alarmRecv.setUserId(paramMap.get(i).get("userId"));
+        alarmRecv.setHpNo(paramMap.get(i).get("hpNo"));
+        alarmRecv.setReceiveYn('N');
+        alarmRecv.setRegDate(new Date());
+        
+        // recvList.add(alarmRecv);
+        alarmRecvRepository.save(alarmRecv);
+      }
+      // for(int i=0; i < recvList.size(); i++) {
+      //   logger.info("alarm recv List VO : " + recvList.get(i).toString());
+      // }
+      // alarm.setAlarmRecvs(recvList);
+      
+      // List<Alarm> info = new ArrayList<>();
+      // Optional<Alarm> info = alarmRepository.findById(5);
+      // for(int i=0; i < info.size(); i++) {
+        // logger.info("alarm List VO : " + info.get().getAlarmRecvs().get(0).toString());
+      // }
       result.put("err_cd", "0000");
     } catch (Exception e) {
       result.put("err_cd", "-1000");

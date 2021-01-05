@@ -55,7 +55,7 @@ public class AlarmRecv {
     @Column(name="MOD_DATE")
     private Date modDate;
 
-    // @ManyToOne(targetEntity = Alarm.class)
-    // @JoinColumn(name = "alarm_seq", insertable = false)
+    // @ManyToOne(targetEntity = Alarm.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @JoinColumn(name = "alarm_seq", referencedColumnName = "seq", insertable = false, updatable = false)
     // private Alarm alarm;
 }
