@@ -38,7 +38,6 @@ public class PhoneBookService {
 
         try {
             logger.info(" PhoneBook Create Params : " + params);
-            logger.info("Array : " + params.get("data"));
             ObjectMapper mapper = new ObjectMapper();
             String jsonArray = mapper.writeValueAsString(params.get("data"));
             List<Map<String, String>> paramMap = new ObjectMapper().readValue(jsonArray, new TypeReference<List<Map<String, String>>>(){});
@@ -47,10 +46,11 @@ public class PhoneBookService {
             int notMemberCount = 0;
 
             count = phoneBookRepository.deleteByUserId(params.get("userId").toString());
-            logger.info("데이터 삭제 개수 : " + count);
-            logger.info("연락처 개수 : " + paramMap.size());
+            logger.info("데이터 삭제 개수 : [ "+count+" ]");
+            logger.info("연락처 개수 : [ " + paramMap.size()+" ]");
             for(int i=0; i < paramMap.size(); i++) {
                logger.info("paramMap list : " + paramMap.get(i).toString());
+               logger.info("paramMap phoneNumber : " + paramMap.get(i).get("phoneNumber").replaceAll(match, ""));
                if(userRepository.existsById(paramMap.get(i).get("phoneNumber").replaceAll(match, ""))) {
                 PhoneBook phoneBook = new PhoneBook();
                 phoneBook.setUserId(params.get("userId").toString());
@@ -66,6 +66,8 @@ public class PhoneBookService {
                    notMemberCount += 1;
                }
             }
+            logger.info("추가된 연락처 개수 : [ "+memberCount+" ]");
+            logger.info("추가되지 않은 연락처 개수 : [ "+notMemberCount+" ]");
             map.put("err_cd", "0000");
         } catch(Exception e) {
             e.printStackTrace();

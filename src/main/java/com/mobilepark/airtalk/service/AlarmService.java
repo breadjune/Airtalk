@@ -1,5 +1,6 @@
 package com.mobilepark.airtalk.service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,8 +17,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mobilepark.airtalk.data.Alarm;
 import com.mobilepark.airtalk.data.AlarmRecv;
+import com.mobilepark.airtalk.data.Position;
+import com.mobilepark.airtalk.data.User;
 import com.mobilepark.airtalk.repository.AlarmRecvRepository;
 import com.mobilepark.airtalk.repository.AlarmRepository;
+import com.mobilepark.airtalk.repository.PositionRepository;
+import com.mobilepark.airtalk.repository.UserRepository;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
@@ -40,7 +45,16 @@ public class AlarmService {
   public AlarmRecvRepository alarmRecvRepository;
   
   @Autowired
+  public UserRepository userRepository;
+
+  @Autowired
+  public PositionRepository positionRepository;
+
+  @Autowired
   SpecificationService<Alarm> specificationService;
+
+  @Autowired
+  FCMService fcmService;
 
   private Specification<Alarm> getSpecification(String type, String search) {
     
@@ -287,13 +301,50 @@ public class AlarmService {
   }
 
   /**
-   * 알림 예약 리스트 조회
+   * 알림 예약 리스트 조회 및 전송
    * 
    * @return List<Alarm>
    */
-  public List<Alarm> reservList() {
-    List<Alarm> list = alarmRepository.alarmReservPush();
-    logger.info("reserv list size : " + list.size());
-    return list;
+  public int reservPush() {
+
+      //예약 시간에 맞는 알림 정보 가져옴
+      List<Alarm> list = alarmRepository.alarmReservPush();
+
+      //예약 PUSH 대상 반복 처리
+      for(int i=0; i < list.size(); i++) {
+        logger.info("예약 알림 정보 : seq=[" + list.get(i).getSeq() +"], user_id=["+ list.get(i).getUserId()+"]");
+        int seq = list.get(i).getSeq();
+        //등록된 예약 시퀸스로 수신자 목록 조회
+        List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeq(seq);
+
+        //수신자 PUSH 전송 반복 처리
+        for(int j=0; j < recvList.size(); j++) {
+
+          //수신자 중 수신 상태가 Y인 경우에만 PUSH를 진행 할 거임
+          if(recvList.get(j).getReceiveYn().equals('Y')) {
+
+            //Position 테이블을 통해 수신자의 현재 위치가 등록된 좌표 반경 2km 안에 있는지 확인
+            Position position = positionRepository.findByPositions(recvList.get(j).getUserId(), list.get(i).getLatitude(), list.get(i).getLongitude());
+
+            if(position != null) {
+              logger.info("position id : " + position.getUserId());
+              //수신 대상의 PushKey 조회를 위해 데이터 가져옴
+              User recvUser = userRepository.findByUserId(position.getUserId());
+              try {
+                fcmService.sendMessageTo(recvUser.getPushKey(), list.get(i).getMessage().substring(0, 8)+"...", list.get(i).getMessage()); 
+              }catch (IOException e) {
+                logger.error("send parameter error", e);
+              }
+              recvList.get(j).setReceiveDate(new Date());
+              alarmRecvRepository.save(recvList.get(j));
+              logger.info("user["+recvList.get(j).getUserId()+"] is reserv alarm push successed");
+            }
+
+          } else {
+            logger.info("user["+recvList.get(j).getUserId()+"] is not received ");
+          }
+        }
+      }
+      return list.size();
   }
 }

@@ -1,16 +1,13 @@
 package com.mobilepark.airtalk.repository;
 
 import org.springframework.stereotype.Repository;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Date;
 import java.util.List;
 
 import com.mobilepark.airtalk.data.Alarm;
-import com.mobilepark.airtalk.data.AlarmRecv;
 
 @Repository
 public interface AlarmRepository extends JpaRepository<Alarm, Integer>, JpaSpecificationExecutor<Alarm> {

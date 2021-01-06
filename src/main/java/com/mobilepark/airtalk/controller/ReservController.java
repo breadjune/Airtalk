@@ -27,9 +27,9 @@ public class ReservController {
         Map<String, String> map = new HashMap<>();
 
         try {
-            List<Alarm> list = alarmService.reservList();
+            int count = alarmService.reservPush();
             map.put("err_cd", "0000");
-            map.put("count", String.valueOf(list.size()));
+            map.put("count", count+"");
         } catch(Exception e) {
             e.printStackTrace();
             map.put("err_cd", "-1000");
