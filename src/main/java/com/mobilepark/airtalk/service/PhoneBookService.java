@@ -3,7 +3,6 @@ package com.mobilepark.airtalk.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,22 +48,25 @@ public class PhoneBookService {
             logger.info("데이터 삭제 개수 : [ "+count+" ]");
             logger.info("연락처 개수 : [ " + paramMap.size()+" ]");
             for(int i=0; i < paramMap.size(); i++) {
-               logger.info("paramMap list : " + paramMap.get(i).toString());
-               logger.info("paramMap phoneNumber : " + paramMap.get(i).get("phoneNumber").replaceAll(match, ""));
-               if(userRepository.existsById(paramMap.get(i).get("phoneNumber").replaceAll(match, ""))) {
+
+            logger.info("paramMap list : " + paramMap.get(i).toString());
+            logger.info("paramMap phoneNumber : " + paramMap.get(i).get("phoneNumber").replaceAll(match, ""));
+            if(userRepository.existsById(paramMap.get(i).get("phoneNumber").replaceAll(match, ""))) {
                 PhoneBook phoneBook = new PhoneBook();
                 phoneBook.setUserId(params.get("userId").toString());
                 phoneBook.setName(paramMap.get(i).get("name"));
                 phoneBook.setPhoneNumber(paramMap.get(i).get("phoneNumber"));
                 phoneBook.setRegDate(new Date());
                 phoneBook.setModDate(new Date());
- 
+
                 phoneBookRepository.save(phoneBook);
                 memberCount += 1;
                } else {
                    logger.info("Not AirTalk member");
                    notMemberCount += 1;
                }
+               logger.info("추가 된 연락처 개수 : " + memberCount);
+               logger.info("추가 되지 않은 연락처 개수 : " + notMemberCount);
             }
             logger.info("추가된 연락처 개수 : [ "+memberCount+" ]");
             logger.info("추가되지 않은 연락처 개수 : [ "+notMemberCount+" ]");
