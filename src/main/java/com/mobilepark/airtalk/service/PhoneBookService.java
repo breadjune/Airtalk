@@ -44,7 +44,7 @@ public class PhoneBookService {
             int memberCount = 0;
             int notMemberCount = 0;
 
-            count = phoneBookRepository.deleteByUserId(params.get("userId").toString());
+            count = phoneBookRepository.deleteByUserId(params.get("userId").toString().replaceAll("-", ""));
             logger.info("데이터 삭제 개수 : [ "+count+" ]");
             logger.info("연락처 개수 : [ " + paramMap.size()+" ]");
 
