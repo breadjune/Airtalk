@@ -271,7 +271,7 @@ public class AlarmService {
     if(service.equals("modify") || service.equals("create")) {
       alarm.setMessage(form.get("message").toString());
       try{
-      alarm.setReservDate(sdf.parse(form.get("reservDate").toString()));
+      alarm.setReservDate(reservFormat.parse(form.get("reservDate").toString()));
       }catch (Exception e){
         e.printStackTrace();
       }
@@ -319,13 +319,13 @@ public class AlarmService {
         logger.info("타임캡슐 예약 정보 : seq=[" + list.get(i).getSeq() +"], user_id=["+ list.get(i).getUserId()+"]");
         int seq = list.get(i).getSeq();
         //등록된 예약 시퀸스로 수신자 목록 조회
-        List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeq(seq);
+        List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeqAndReceiveYn(seq, 'N');
         String message=list.get(i).getMessage();
         String title= message.length() > 8 ? message.substring(0, 8)+"..." : message;
         //수신자 PUSH 전송 반복 처리
         for(int j=0; j < recvList.size(); j++) {
 
-          if(recvList.get(j).getReceiveYn().equals('N')) {
+          // if(recvList.get(j).getReceiveYn().equals('N')) {
             //Position 테이블을 통해 수신자의 현재 위치가 등록된 좌표 반경 2km 안에 있는지 확인
             Position position = positionRepository.findByPositions(recvList.get(j).getUserId(), list.get(i).getLatitude(), list.get(i).getLongitude());
 
@@ -345,9 +345,9 @@ public class AlarmService {
               }
               
             }
-          } else {
-            logger.info("user["+recvList.get(j).getUserId()+"] 이미 수신된 대상입니다.");
-          }
+          // } else {
+          //   logger.info("user["+recvList.get(j).getUserId()+"] 이미 수신된 대상입니다.");
+          // }
         }
       }
       return list.size();

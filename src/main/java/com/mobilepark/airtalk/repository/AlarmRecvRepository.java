@@ -11,6 +11,7 @@ import com.mobilepark.airtalk.data.AlarmRecv;
 @Repository
 public interface AlarmRecvRepository extends JpaRepository<AlarmRecv, Integer>, JpaSpecificationExecutor<AlarmRecv> {
     List<AlarmRecv> findByAlarmSeq(int seq);
+    List<AlarmRecv> findByAlarmSeqAndReceiveYn(int seq, char receiveYn);
     AlarmRecv findByAlarmSeqAndUserId(int seq, String receiverId);
     void deleteByAlarmSeqAndUserId(int seq, String userId);
     boolean existsByAlarmSeqAndUserId(int seq, String receiverId);
