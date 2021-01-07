@@ -29,8 +29,8 @@ public class FCMService {
     private final String FCM_SERVER_KEY = "AAAAVBac6Tg:APA91bEvSaInugsvNC9CyAWodU012JLZJcqekHEYD5JW6qGHzhfKQKMlT4tvO5xOvL0Q_4nsBrCkU6y0ZpTW5vL7dFzg8wV1V0inLF26kuJZh4ak37gK1pNP7nvo6sNnq7XyXlWmM9pD";
     private final String API_URL = "https://fcm.googleapis.com/fcm/send";
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+    public void sendMessageTo(String targetToken, String title, String body, String sender, String receiver) throws IOException {
+        String message = makeMessage(targetToken, title, body, sender, receiver);
 
         OkHttpClient client = new OkHttpClient();
 
@@ -46,16 +46,21 @@ public class FCMService {
         System.out.println("response : " + response.body().string());
     }
 
-    private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
+    private String makeMessage(String targetToken, String title, String body, String sender, String receiver) throws JsonProcessingException {
 
-        Map<String, Object> data = new HashMap<>();
+        Map<String, Object> obj = new HashMap<>();
         Map<String, Object> notification = new HashMap<>();
-        data.put("to", targetToken);
+        Map<String, Object> data = new HashMap<>();
+        obj.put("to", targetToken);
         notification.put("title", title);
         notification.put("body", body);
-        data.put("notification", notification);
+        data.put("sender", sender);
+        data.put("receiver", receiver);
+        data.put("message", body);
+        obj.put("notification", notification);
+        obj.put("data", data);
         JSONObject json = new JSONObject();
-        json.putAll(data);
+        json.putAll(obj);
              
         return json.toString();
     }

@@ -161,6 +161,16 @@ public class AlarmService {
       logger.info("alarm recv List params : " + paramMap.toString());
       logger.info("alarm create seq : " + data.getSeq());
       // List<AlarmRecv> recvList = new ArrayList<>();
+      
+      AlarmRecv myAlarmRecv = new AlarmRecv();
+      myAlarmRecv.setAlarmSeq(data.getSeq());
+      myAlarmRecv.setUserId(data.getUserId());
+      myAlarmRecv.setHpNo(data.getUserId());
+      myAlarmRecv.setReceiveYn('N');
+      myAlarmRecv.setRegDate(new Date());
+
+      alarmRecvRepository.save(myAlarmRecv);
+
       for(int i=0; i < paramMap.size(); i++) {
         AlarmRecv alarmRecv = new AlarmRecv();
         alarmRecv.setAlarmSeq(data.getSeq());
@@ -325,7 +335,7 @@ public class AlarmService {
               User recvUser = userRepository.findByUserId(position.getUserId());
               try {
                 
-                fcmService.sendMessageTo(recvUser.getPushKey(), title, message); 
+                fcmService.sendMessageTo(recvUser.getPushKey(), title, message, list.get(i).getUserId(), position.getUserId()); 
                 recvList.get(j).setReceiveDate(new Date());
                 recvList.get(j).setReceiveYn('Y');
                 alarmRecvRepository.save(recvList.get(j));
