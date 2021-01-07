@@ -51,7 +51,7 @@ public class Alarm {
     @Column(name="BD_NM", updatable=false)
     private String bdNm;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm", timezone="Asia/Seoul")
     @Column(name="RESERV_DATE", nullable = false)
     private Date reservDate;
 

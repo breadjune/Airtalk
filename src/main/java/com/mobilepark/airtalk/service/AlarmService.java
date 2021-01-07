@@ -170,19 +170,8 @@ public class AlarmService {
         alarmRecv.setReceiveYn('N');
         alarmRecv.setRegDate(new Date());
         
-        // recvList.add(alarmRecv);
         alarmRecvRepository.save(alarmRecv);
       }
-      // for(int i=0; i < recvList.size(); i++) {
-      //   logger.info("alarm recv List VO : " + recvList.get(i).toString());
-      // }
-      // alarm.setAlarmRecvs(recvList);
-      
-      // List<Alarm> info = new ArrayList<>();
-      // Optional<Alarm> info = alarmRepository.findById(5);
-      // for(int i=0; i < info.size(); i++) {
-        // logger.info("alarm List VO : " + info.get().getAlarmRecvs().get(0).toString());
-      // }
       result.put("err_cd", "0000");
     } catch (Exception e) {
       result.put("err_cd", "-1000");
@@ -312,7 +301,7 @@ public class AlarmService {
 
       //예약 PUSH 대상 반복 처리
       for(int i=0; i < list.size(); i++) {
-        logger.info("예약 알림 정보 : seq=[" + list.get(i).getSeq() +"], user_id=["+ list.get(i).getUserId()+"]");
+        logger.info("타임캡슐 예약 정보 : seq=[" + list.get(i).getSeq() +"], user_id=["+ list.get(i).getUserId()+"]");
         int seq = list.get(i).getSeq();
         //등록된 예약 시퀸스로 수신자 목록 조회
         List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeq(seq);
@@ -320,28 +309,27 @@ public class AlarmService {
         //수신자 PUSH 전송 반복 처리
         for(int j=0; j < recvList.size(); j++) {
 
-          //수신자 중 수신 상태가 Y인 경우에만 PUSH를 진행 할 거임
-          if(recvList.get(j).getReceiveYn().equals('Y')) {
-
+          if(recvList.get(j).getReceiveYn().equals('N')) {
             //Position 테이블을 통해 수신자의 현재 위치가 등록된 좌표 반경 2km 안에 있는지 확인
             Position position = positionRepository.findByPositions(recvList.get(j).getUserId(), list.get(i).getLatitude(), list.get(i).getLongitude());
 
             if(position != null) {
-              logger.info("position id : " + position.getUserId());
+              logger.info("타임캡슐 좌표 2km 반경 안에 있는 수신자 : " + position.getUserId());
               //수신 대상의 PushKey 조회를 위해 데이터 가져옴
               User recvUser = userRepository.findByUserId(position.getUserId());
               try {
                 fcmService.sendMessageTo(recvUser.getPushKey(), list.get(i).getMessage().substring(0, 8)+"...", list.get(i).getMessage()); 
+                recvList.get(j).setReceiveDate(new Date());
+                recvList.get(j).setReceiveYn('Y');
+                alarmRecvRepository.save(recvList.get(j));
+                logger.info("user["+recvList.get(j).getUserId()+"] 에게 푸시가 정상 발송 되었습니다.");
               }catch (IOException e) {
                 logger.error("send parameter error", e);
               }
-              recvList.get(j).setReceiveDate(new Date());
-              alarmRecvRepository.save(recvList.get(j));
-              logger.info("user["+recvList.get(j).getUserId()+"] is reserv alarm push successed");
+              
             }
-
           } else {
-            logger.info("user["+recvList.get(j).getUserId()+"] is not received ");
+            logger.info("user["+recvList.get(j).getUserId()+"] 이미 수신된 대상입니다.");
           }
         }
       }
