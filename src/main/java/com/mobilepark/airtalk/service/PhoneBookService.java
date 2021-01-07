@@ -52,12 +52,12 @@ public class PhoneBookService {
             logger.info("paramMap list : " + paramMap.get(i).toString());
             
                 if( paramMap.get(i).get("phoneNumber") != null && paramMap.get(i).get("name") != null &&
-                    userRepository.existsById(paramMap.get(i).get("phoneNumber").replaceAll(match, ""))) {
+                    userRepository.existsById(paramMap.get(i).get("phoneNumber").replaceAll("-", ""))) {
 
                     PhoneBook phoneBook = new PhoneBook();
-                    phoneBook.setUserId(params.get("userId").toString());
+                    phoneBook.setUserId(params.get("userId").toString().replaceAll("-", ""));
                     phoneBook.setName(paramMap.get(i).get("name"));
-                    phoneBook.setPhoneNumber(paramMap.get(i).get("phoneNumber"));
+                    phoneBook.setPhoneNumber(paramMap.get(i).get("phoneNumber").replaceAll("-", ""));
                     phoneBook.setRegDate(new Date());
                     phoneBook.setModDate(new Date());
 
