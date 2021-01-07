@@ -71,6 +71,7 @@ public class UserService {
                 User.setName((String)jObject.get("name"));
                 User.setPassword((String)jObject.get("password"));
                 User.setHpNo((String)jObject.get("hpNo"));
+                User.setPushKey((String)jObject.get("pushKey"));
                 User.setRegDate(new Date());
 
                 User = UserRepository.save(User);
