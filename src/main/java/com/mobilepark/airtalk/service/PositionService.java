@@ -61,11 +61,11 @@ public class PositionService {
         Position position = new Position();
         String result = "0000";
 
-        position.setUserId(params.get("userId").toString());
-        position.setLatitude(Double.parseDouble(params.get("userId").toString()));
-        position.setLongitude(Double.parseDouble(params.get("userId").toString()));
-        position.setAddress(params.get("userId").toString());
-        position.setDescription(params.get("userId").toString());
+        position.setUserId(params.get("userId").toString().replaceAll("-", ""));
+        position.setLatitude(Double.parseDouble(params.get("latitude").toString()));
+        position.setLongitude(Double.parseDouble(params.get("longitude").toString()));
+        position.setAddress(params.get("address").toString());
+        position.setDescription(params.get("description").toString());
         if(type.equals("create")) position.setRegDate(new Date());
         position.setModDate(new Date());
 

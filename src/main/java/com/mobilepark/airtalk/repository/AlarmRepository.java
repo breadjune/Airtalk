@@ -17,7 +17,7 @@ public interface AlarmRepository extends JpaRepository<Alarm, Integer>, JpaSpeci
     List<Alarm> findByCode(String keyword);
     List<Alarm> findByLatitudeAndLongitude(double latitude, double longitude);
 
-    @Query(value = "select * from TBL_ALARM where RESERV_DATE < str_to_date(now(),'%Y-%m-%d %H:%i')", nativeQuery=true)
+    @Query(value = "select * from TBL_ALARM where RESERV_DATE = str_to_date(now(),'%Y-%m-%d %H:%i')", nativeQuery=true)
     List<Alarm> alarmReservPush();
     // List<Alarm> findeByReservDate(String keyword);
 }
