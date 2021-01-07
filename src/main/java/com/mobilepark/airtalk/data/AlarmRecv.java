@@ -43,15 +43,15 @@ public class AlarmRecv {
     @Column(name="RECEIVE_YN")
     private Character receiveYn;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyyMMddHHmm", timezone="Asia/Seoul")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="RECEIVE_DATE")
     private Date ReceiveDate;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", nullable = false, updatable=false)
     private Date regDate;
 
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="MOD_DATE")
     private Date modDate;
 

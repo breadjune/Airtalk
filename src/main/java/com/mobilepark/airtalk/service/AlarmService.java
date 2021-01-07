@@ -1,7 +1,7 @@
 package com.mobilepark.airtalk.service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -252,7 +251,8 @@ public class AlarmService {
   public Alarm getParameter(JSONObject form, String service) {
     
     Alarm alarm = new Alarm();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddmmss");
+    SimpleDateFormat reservFormat = new SimpleDateFormat("yyyyMMddHHmm");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
     if(service.equals("modify") || service.equals("remove")) {
       alarm.setSeq(Integer.parseInt(form.get("seq").toString()));
@@ -273,6 +273,11 @@ public class AlarmService {
       alarm.setLatitude(Double.parseDouble(form.get("latitude").toString()));
       alarm.setLongitude(Double.parseDouble(form.get("longitude").toString()));
       alarm.setBdNm(form.get("bdNm") != null ? form.get("bdNm").toString() : "");
+      try{
+        alarm.setReservDate(reservFormat.parse(form.get("reservDate").toString()));
+      }catch (ParseException e){
+        e.printStackTrace();
+      }
     }
     return alarm;
   }
@@ -305,7 +310,8 @@ public class AlarmService {
         int seq = list.get(i).getSeq();
         //등록된 예약 시퀸스로 수신자 목록 조회
         List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeq(seq);
-
+        String message=list.get(i).getMessage();
+        String title= message.length() > 8 ? message.substring(0, 8)+"..." : message;
         //수신자 PUSH 전송 반복 처리
         for(int j=0; j < recvList.size(); j++) {
 
@@ -318,7 +324,8 @@ public class AlarmService {
               //수신 대상의 PushKey 조회를 위해 데이터 가져옴
               User recvUser = userRepository.findByUserId(position.getUserId());
               try {
-                fcmService.sendMessageTo(recvUser.getPushKey(), list.get(i).getMessage().substring(0, 8)+"...", list.get(i).getMessage()); 
+                
+                fcmService.sendMessageTo(recvUser.getPushKey(), title, message); 
                 recvList.get(j).setReceiveDate(new Date());
                 recvList.get(j).setReceiveYn('Y');
                 alarmRecvRepository.save(recvList.get(j));

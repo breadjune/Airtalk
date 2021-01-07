@@ -37,7 +37,6 @@ public class AlarmRecvService {
    * @return List<AlarmRecv>
    */
   public Map<String, Object> list(JSONObject form) {
-    logger.info("AlarmRecvService invoked!");
     List<AlarmRecv> list = new ArrayList<>();
     Map<String, Object> map = new HashMap<>();
   
@@ -167,7 +166,6 @@ public class AlarmRecvService {
    */
   public AlarmRecv getParameter(JSONObject form, String service) {
     AlarmRecv alarmRecv = new AlarmRecv();
-    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
     try {
       if(service.equals("create") || service.equals("modify") || service.equals("remove")) {
         alarmRecv.setAlarmSeq(Integer.parseInt(form.get("alarmSeq").toString()));
