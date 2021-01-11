@@ -22,6 +22,9 @@ public interface UserRepository extends JpaRepository<User , String> , JpaSpecif
 
    // boolean existsById(String id);
 
+   @Query(value = "SELECT PUSH_KEY FROM TBL_USER WHERE ID = ?1", nativeQuery = true)
+   String qfindByPushKey(String userId);
+
    @Query(value = "SELECT COUNT(*) FROM TBL_USER", nativeQuery = true)
    int countByAll();
 }

@@ -35,7 +35,6 @@ public class PushController {
     public @ResponseBody Map<String, String> message(@RequestBody JSONObject params) throws IOException {
         Map<String, String> map = new HashMap<>();
         logger.info("PARAMS : [" + params+ "]");
-        // String pushKey = "cO2_unv92BI:APA91bFW_SjGedLSq1C6Az87B2BfXJPpo99knmiGiMVyhZgQDrB3zb3UWTfvXezDzyIrxKUUsf5pq5vZTrgzdo3gzvgau_6bLgYoZqfPYD_wO6qq9p5H_QNG9ijMBL3qqEA29yIIKlxS";
         try {
             fcmService.sendMessageTo(params.get("pushKey").toString(), params.get("title").toString(), params.get("body").toString(), 
                                      params.get("sender").toString(), params.get("receiver").toString());

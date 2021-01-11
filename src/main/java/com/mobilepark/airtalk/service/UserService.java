@@ -125,6 +125,7 @@ public class UserService {
                          User.setPassword((String)jObject.get("password"));
                         
                     User.setHpNo((String)jObject.get("hpNo"));
+                    User.setPushKey((String)jObject.get("pushKey"));
                     User.setModDate(new Date());
     
                     User = UserRepository.save(User);

@@ -149,9 +149,6 @@ public class AlarmService {
       logger.info("params : ["+form+"]");
       Alarm alarm = this.getParameter(form, "create");
       alarm.setRegDate(new Date());
-      logger.info("alarm VO : [userId : "+alarm.getUserId()+"][message : "+alarm.getMessage()+"][code : "+alarm.getCode()+"]"+
-                         "[latitude : "+alarm.getLatitude()+"][longitude : "+alarm.getLongitude()+"[bdNm : "+alarm.getBdNm()+"]"+
-                         "[reservDate : "+alarm.getReservDate()+"]");
 
       Alarm data = alarmRepository.save(alarm);
 
@@ -283,6 +280,7 @@ public class AlarmService {
       alarm.setLatitude(Double.parseDouble(form.get("latitude").toString()));
       alarm.setLongitude(Double.parseDouble(form.get("longitude").toString()));
       alarm.setBdNm(form.get("bdNm") != null ? form.get("bdNm").toString() : "");
+      alarm.setRoomId(form.get("roomId") != null ? form.get("roomId").toString() : "");
       try{
         alarm.setReservDate(reservFormat.parse(form.get("reservDate").toString()));
       }catch (ParseException e){
@@ -321,7 +319,10 @@ public class AlarmService {
         //등록된 예약 시퀸스로 수신자 목록 조회
         List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeqAndReceiveYn(seq, 'N');
         String message=list.get(i).getMessage();
-        String title= message.length() > 8 ? message.substring(0, 8)+"..." : message;
+        String title= list.get(i).getUserId();
+        if(list.get(i).getGroupYn() != null && list.get(i).getRoomName() != null) {
+          title = list.get(i).getRoomName();
+        }
         //수신자 PUSH 전송 반복 처리
         for(int j=0; j < recvList.size(); j++) {
 

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 // import com.mobilepark.airtalk.data.FcmMessage;
 
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +26,9 @@ import okhttp3.Response;
 @Component
 @RequiredArgsConstructor
 public class FCMService {
+
+    private static final Logger logger = LoggerFactory.getLogger(FCMService.class);
+
     // private final ObjectMapper objectMapper;
     // private final String FCM_SERVER_KEY = "AAAAw39ksXI:APA91bEu0ZodPZ6pMU5nwy9AGu44nKR9m7fDEDufmMeZWDNOi-FZAJ1zT849QL0wWOmNl7LtajvgnWTVesNqx10qxV5k8TS8BETzG1LwKQXeClcinx-qlSx2YCvxR4nK_o1pmGouEkXl";
     private final String FCM_SERVER_KEY = "AAAAVBac6Tg:APA91bEvSaInugsvNC9CyAWodU012JLZJcqekHEYD5JW6qGHzhfKQKMlT4tvO5xOvL0Q_4nsBrCkU6y0ZpTW5vL7dFzg8wV1V0inLF26kuJZh4ak37gK1pNP7nvo6sNnq7XyXlWmM9pD";
@@ -56,6 +61,7 @@ public class FCMService {
         notification.put("body", body);
         data.put("sender", sender);
         data.put("receiver", receiver);
+        // data.put("roomId", roomId);
         data.put("message", body);
         obj.put("notification", notification);
         obj.put("data", data);

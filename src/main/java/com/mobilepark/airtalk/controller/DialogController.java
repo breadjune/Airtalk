@@ -4,9 +4,7 @@ import java.util.HashMap;
 
 import java.util.Map;
 
-import com.mobilepark.airtalk.service.AlarmRecvService;
-import com.mobilepark.airtalk.service.AlarmService;
-import com.mobilepark.airtalk.service.FCMService;
+import com.mobilepark.airtalk.service.DialogService;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,29 +18,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @RequestMapping(value="/restapi/dialog",method = RequestMethod.POST)
 public class DialogController {
-  
-    @Autowired
-    public AlarmService alarmService;  
 
     @Autowired
-    public AlarmRecvService alarmRecvService; 
-
-    @Autowired
-    public FCMService fcmService; 
+    public DialogService dialogService; 
 
     @RequestMapping(value="/create",method = RequestMethod.POST)
-    public @ResponseBody Map<String, Object> create (@RequestBody JSONObject params) {
+    public @ResponseBody Map<String, String> create (@RequestBody JSONObject params) {
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
 
-        try {
-            System.out.println("params : " + params);
-            
-            map.put("err_cd", "0000");
-        } catch(Exception e) {
-            e.printStackTrace();
-            map.put("err_cd", "-1000");
-        }
+        map = dialogService.dialogPush(params);
+
     return map;
 
     }

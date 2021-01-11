@@ -51,6 +51,12 @@ public class Alarm {
     @Column(name="BD_NM", updatable=false)
     private String bdNm;
 
+    @Column(name="ROOM_NAME")
+    private String roomName;
+
+    @Column(name="GROUP_YN")
+    private String groupYn;
+
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmm", timezone="Asia/Seoul")
     @Column(name="RESERV_DATE", nullable = false)
     private Date reservDate;
