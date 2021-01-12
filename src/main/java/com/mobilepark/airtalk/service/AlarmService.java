@@ -280,7 +280,8 @@ public class AlarmService {
       alarm.setLatitude(Double.parseDouble(form.get("latitude").toString()));
       alarm.setLongitude(Double.parseDouble(form.get("longitude").toString()));
       alarm.setBdNm(form.get("bdNm") != null ? form.get("bdNm").toString() : "");
-      alarm.setRoomId(form.get("roomId") != null ? form.get("roomId").toString() : "");
+      alarm.setRoomName(form.get("roomId") != null ? form.get("roomId").toString() : "");
+      alarm.setGroupYn(form.get("groupYn") != null ? form.get("groupYn").toString() : "");
       try{
         alarm.setReservDate(reservFormat.parse(form.get("reservDate").toString()));
       }catch (ParseException e){
