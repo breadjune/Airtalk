@@ -115,7 +115,7 @@ public class UserService {
                  try {
                      /* START */
                
-                     UserRepository.findByUserId((String)jObject.get("id"));
+                    //  UserRepository.findByUserId((String)jObject.get("id"));
                      User = new User();
                      User.setUserId((String)jObject.get("id"));
                      User.setName((String)jObject.get("name"));
