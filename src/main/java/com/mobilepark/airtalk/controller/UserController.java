@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.P
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/restapi/user")
@@ -130,6 +131,15 @@ public class UserController {
        
         System.out.println("리턴값 : " + result.toString());
         return result;
+    }
+
+    /**********************************
+        --------- PushKey 수정 ---------
+     **********************************/
+    @RequestMapping(value = "updatePushKey" , method=RequestMethod.POST)
+    public @ResponseBody Map<String,String> updatePushKey(@RequestBody JSONObject param){
+        logger.info("params : " + param);
+        return userService.updatePushKey(param);
     }
 
     /****************************

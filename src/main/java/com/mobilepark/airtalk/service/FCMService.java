@@ -61,7 +61,7 @@ public class FCMService {
         notification.put("body", body);
         data.put("sender", sender);
         data.put("receiver", receiver);
-        // data.put("roomId", roomId);
+        // data.put("roomName", title);
         data.put("message", body);
         obj.put("notification", notification);
         obj.put("data", data);

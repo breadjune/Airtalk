@@ -25,6 +25,9 @@ public interface UserRepository extends JpaRepository<User , String> , JpaSpecif
    @Query(value = "SELECT PUSH_KEY FROM TBL_USER WHERE ID = ?1", nativeQuery = true)
    String qfindByPushKey(String userId);
 
+   @Query(value = "UPDATE TBL_USER SET PUSH_KEY = ?1 WHERE ID = ?2", nativeQuery = true)
+   void qUpdatePushKey(String pushKey, String userId);
+
    @Query(value = "SELECT COUNT(*) FROM TBL_USER", nativeQuery = true)
    int countByAll();
 }

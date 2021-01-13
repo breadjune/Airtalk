@@ -2,6 +2,7 @@ package com.mobilepark.airtalk.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -17,6 +18,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +139,22 @@ public class UserService {
             }
         } else 
             return 3; 
+    }
+
+    @Transactional
+    public Map<String, String> updatePushKey(JSONObject param) {
+        Map<String, String> map = new HashMap<>();
+        String pushKey = param.get("pushKey").toString();
+        String userId = param.get("id").toString();
+
+        try {
+            UserRepository.qUpdatePushKey(pushKey, userId);
+            map.put("result", "SUCCESS");
+        } catch(Exception e) {
+            map.put("result", "FAIL");
+            e.printStackTrace();
+        }
+        return map;
     }
 
     @Transactional

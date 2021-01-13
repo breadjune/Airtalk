@@ -259,7 +259,6 @@ public class AlarmService {
     
     Alarm alarm = new Alarm();
     SimpleDateFormat reservFormat = new SimpleDateFormat("yyyyMMddHHmm");
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
     if(service.equals("modify") || service.equals("remove")) {
       alarm.setSeq(Integer.parseInt(form.get("seq").toString()));
@@ -319,10 +318,10 @@ public class AlarmService {
         int seq = list.get(i).getSeq();
         //등록된 예약 시퀸스로 수신자 목록 조회
         List<AlarmRecv> recvList = alarmRecvRepository.findByAlarmSeqAndReceiveYn(seq, 'N');
-        String message=list.get(i).getMessage();
-        String title= list.get(i).getUserId();
-        if(list.get(i).getGroupYn() != null && list.get(i).getRoomName() != null) {
-          title = list.get(i).getRoomName();
+        String message = list.get(i).getMessage();
+        String title = list.get(i).getUserId();
+        if(list.get(i).getGroupYn() != null && list.get(i).getGroupYn().equals("Y")) {
+          if(list.get(i).getRoomName() != null) title = list.get(i).getRoomName();
         }
         //수신자 PUSH 전송 반복 처리
         for(int j=0; j < recvList.size(); j++) {
