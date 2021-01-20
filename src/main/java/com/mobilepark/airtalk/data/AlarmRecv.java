@@ -25,7 +25,6 @@ import lombok.ToString;
 
 @Entity
 @Getter @Setter
-@ToString
 @Table(name ="TBL_ALARM_RECEIVER")
 @IdClass(AlarmRecvPK.class)
 public class AlarmRecv {
@@ -44,19 +43,19 @@ public class AlarmRecv {
     @Column(name="RECEIVE_YN")
     private Character receiveYn;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="RECEIVE_DATE")
     private Date ReceiveDate;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", nullable = false, updatable=false)
     private Date regDate;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="MOD_DATE")
     private Date modDate;
 
-    // @ManyToOne(targetEntity = Alarm.class)
-    // @JoinColumn(name = "SEQ", insertable = false)
+    // @ManyToOne(targetEntity = Alarm.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @JoinColumn(name = "alarm_seq", referencedColumnName = "seq", insertable = false, updatable = false)
     // private Alarm alarm;
 }

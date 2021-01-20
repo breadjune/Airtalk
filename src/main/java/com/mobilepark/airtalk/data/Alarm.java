@@ -43,28 +43,37 @@ public class Alarm {
     private String code;
 
     @Column(name="LATITUDE", nullable = false, updatable=false)
-    private BigDecimal latitude;
+    private Double latitude;
 
     @Column(name="LONGITUDE", nullable = false, updatable=false)
-    private BigDecimal longitude;
+    private Double longitude;
 
     @Column(name="BD_NM", updatable=false)
     private String bdNm;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @Column(name="ROOM_NAME")
+    private String roomName;
+
+    @Column(name="GROUP_YN")
+    private String groupYn;
+
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmm", timezone="Asia/Seoul")
     @Column(name="RESERV_DATE", nullable = false)
     private Date reservDate;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", updatable=false, nullable = false)
     private Date regDate;
 
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyyMMddHHmmss", timezone="Asia/Seoul")
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="MOD_DATE", insertable = false)
     private Date modDate;
 
-
     // @OneToMany(mappedBy = "alarm", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    // private List<AlarmRecv> alarmRecvList;
+    // private List<AlarmRecv> alarmRecvs;
+
+    // @OneToMany(targetEntity = AlarmRecv.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // @JoinColumn(name = "alarm_seq", referencedColumnName = "seq")
+    // private List<AlarmRecv> alarmRecvs;
 
 }

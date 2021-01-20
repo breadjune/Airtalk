@@ -15,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 // import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 // import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import java.util.*;
 
@@ -69,6 +70,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     //             .addResourceLocations("file:///"+ location); // "file:///" 접두어를 빼먹으면 안된다,
 
     // }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**");
+    }
 
     @Bean
     public MappingJackson2JsonView jsonView() {

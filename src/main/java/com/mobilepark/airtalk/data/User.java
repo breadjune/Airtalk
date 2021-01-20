@@ -27,6 +27,9 @@ public class User {
     @Column(name="HP_NO" , nullable = false)
     private String hpNo;
 
+    @Column(name="PUSH_KEY")
+    private String pushKey;
+
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     @Column(name="REG_DATE", updatable = false ,nullable = false)
     private Date regDate;

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,7 +67,6 @@ public class AdminGroupController {
             logger.info("searchWord : " + searchWord);
             logger.info("searchType : " + searchType);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         try {
@@ -175,7 +175,6 @@ public class AdminGroupController {
                 result = "FAIL";
             }
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;
@@ -193,12 +192,19 @@ public class AdminGroupController {
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
-           
-            String authGroupSeq = (String)jObject.get("authGroupSeq"); 
+            System.out.println(" authGroupSeq : " + String.valueOf(jObject.get("authGroupSeq")));
+            System.out.println(" gname : " + (String)jObject.get("gname"));
+            System.out.println(" userGroup : " + (String)jObject.get("userGroup"));
+
+
+            String authGroupSeq = String.valueOf(jObject.get("authGroupSeq")); 
             String gname = (String)jObject.get("gname"); 
             String userGroup = (String)jObject.get("userGroup"); 
             Object auth = jObject.get("auth");
             Object menuSeq = jObject.get("menuSeq");
+
+
+           
 
               //UPDATE 정보 전달
             try {
@@ -209,7 +215,6 @@ public class AdminGroupController {
                 result = "FAIL";
             }
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -228,7 +233,7 @@ public class AdminGroupController {
         try { 
             JSONParser parser = new JSONParser();
             JSONObject jObject = (JSONObject) parser.parse(param);
-            String authGroupSeq = (String)jObject.get("authGroupSeq"); 
+            String authGroupSeq = String.valueOf(jObject.get("authGroupSeq")); 
               //DELETE 정보 전달
             try {
                 authGroupService.delete(Integer.parseInt(authGroupSeq));
@@ -238,10 +243,20 @@ public class AdminGroupController {
                 result = "FAIL";
             }
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return result;
     }
+
+    @RequestMapping(value="/search",method = RequestMethod.POST)
+    public @ResponseBody List<AdminGroup> search (Model model, @RequestBody JSONObject form, Pageable pageable) {
+      return authGroupService.search(form);
+  
+    }
+    @RequestMapping(value="/count",method = RequestMethod.POST)
+    public @ResponseBody int count (Model model, @RequestBody JSONObject form) { 
+        
+        return authGroupService.count(form);
+  }
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.mobilepark.airtalk.data.BoardFile;
-import com.mobilepark.airtalk.data.File;
+import com.mobilepark.airtalk.data.FileData;
 import com.mobilepark.airtalk.repository.BoardFileRepository;
 import com.mobilepark.airtalk.repository.FileRepository;
 import com.mobilepark.airtalk.util.UploadUtil;
@@ -77,11 +77,11 @@ public class FileService {
     if (realFileList.size() == newFileList.size()) {
         Date date = new Date();
       for(int i=0; i < realFileList.size(); i++) {
-        File file = new File();
-        file.setBoardSeq(boardSeq);
+        FileData file = new FileData();
+        file.setSeq(boardSeq);
         file.setRealFileName(realFileList.get(i));
         file.setNewFileName(newFileList.get(i));
-        file.setRegDate(sdf.format(date));
+        file.setRegDate(date);
 
         try {
           fileRepository.save(file);

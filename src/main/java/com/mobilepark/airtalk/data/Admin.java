@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -13,9 +15,7 @@ import lombok.Setter;
 @Entity
 @Getter @Setter
 @Table(name="TBL_ADMIN")
-public class Admin extends BaseSerializable {
-
-    private static final long serialVersionUID = -2382480158604649420L;
+public class Admin {
     
     @Id
     @Column(name="ADMIN_ID")
@@ -41,6 +41,14 @@ public class Admin extends BaseSerializable {
 
     @Column(name="EMAIL")
     private String email;
+
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
+    @Column(name="REG_DATE", columnDefinition = "DATETIME", updatable = false)
+    private Date regDate;
+    
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
+    @Column(name="MOD_DATE", columnDefinition = "DATETIME")
+    private Date modDate;
 
     @OneToOne(targetEntity = AdminGroup.class)
     @JoinColumn(name="ADMIN_GROUP_SEQ", insertable = false, updatable = false)

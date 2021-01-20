@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.mobilepark.airtalk.data.User;
-import com.mobilepark.airtalk.data.UserAPI;
 import com.mobilepark.airtalk.service.UserService;
 
 import org.json.simple.JSONObject;
@@ -17,10 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/restapi/user")
@@ -62,11 +60,17 @@ public class UserController {
 
         HashMap<String, String> result = new HashMap<String, String>();
 
-        // CREATE 정보 전달
+        // CREATE 정보 전달 
         try {
-            userService.create(param);
-            result.put("result", "SUCCESS");
-            result.put("resultCode", "0");
+            String resultId = userService.create(param);
+            if(resultId.equals("SUCC")){
+                result.put("result", "SUCCESS");
+                result.put("resultCode", "0");
+            }
+            else{
+                result.put("result", "FAILID");
+                result.put("resultCode", "-2");
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
             result.put("result", "FAIL");
@@ -78,15 +82,15 @@ public class UserController {
     /****************************
      * --------- 상세 정보 ---------
      ****************************/
-    @RequestMapping(value = "modify", method = RequestMethod.GET)
-    public @ResponseBody String modify(@RequestBody String param){
+    @RequestMapping(value = "view", method = RequestMethod.POST)
+    public @ResponseBody String view(@RequestBody String param){
         logger.info("데이터 정보 : " + param);
         HashMap<String,String> result = new HashMap<String,String>();
         String resultMod = new String();
         
          //CREATE 정보 전달
          try {
-            resultMod = userService.modify(param);
+            resultMod = userService.view(param);
          } catch(Exception e) {
             logger.error(e.getMessage());
             result.put("result", "FAIL");
@@ -127,6 +131,15 @@ public class UserController {
        
         System.out.println("리턴값 : " + result.toString());
         return result;
+    }
+
+    /**********************************
+        --------- PushKey 수정 ---------
+     **********************************/
+    @RequestMapping(value = "updatePushKey" , method=RequestMethod.POST)
+    public @ResponseBody Map<String,String> updatePushKey(@RequestBody JSONObject param){
+        logger.info("params : " + param);
+        return userService.updatePushKey(param);
     }
 
     /****************************

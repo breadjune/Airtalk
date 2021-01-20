@@ -2,11 +2,11 @@ package com.mobilepark.airtalk.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.Transactional;
 import com.mobilepark.airtalk.data.User;
-import com.mobilepark.airtalk.data.UserAPI;
 import com.mobilepark.airtalk.repository.UserRepository;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,11 +18,12 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -56,31 +57,39 @@ public class UserService {
     }
 
     @Transactional
-    public void create(String param) throws ParseException {
+    public String create(String param) throws ParseException {
         User User = null;
 
         System.out.println("test 정보: " + param);
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
-        try {
-            /* START */
-            User = new User();
-            User.setUserId((String)jObject.get("id"));
-            User.setName((String)jObject.get("name"));
-            User.setPassword((String)jObject.get("password"));
-            User.setHpNo((String)jObject.get("hpNo"));
-            User.setRegDate(new Date());
 
-            User = UserRepository.save(User);
+        if(UserRepository.findByUserId((String)jObject.get("id"))==null){
+            try {
+             /* START */
+                User = new User();
+                User.setUserId((String)jObject.get("id"));
+                User.setName((String)jObject.get("name"));
+                User.setPassword((String)jObject.get("password"));
+                User.setHpNo((String)jObject.get("hpNo"));
+                User.setPushKey((String)jObject.get("pushKey"));
+                User.setRegDate(new Date());
 
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+                User = UserRepository.save(User);
+                return "SUCC";
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                return e.getMessage();
+            }
+        } 
+        else{
+            return "FAIL";
         }
     }
 
     @Transactional
-    public String modify(String param) throws ParseException {
+    public String view(String param) throws ParseException {
         System.out.println("test 정보: " + param);
         User User = null;
         JSONParser parser = new JSONParser();
@@ -103,21 +112,22 @@ public class UserService {
         JSONParser parser = new JSONParser();
         JSONObject jObject;
         jObject = (JSONObject) parser.parse(param);
-            if(UserRepository.findByPassword((String)jObject.get("bunpassword"))!=null) { 
+            if(UserRepository.findByPasswordAndUserId((String)jObject.get("bunpassword"),(String)jObject.get("id") )!=null) { 
                 //비밀번호 체크
                  try {
                      /* START */
                
-                     UserRepository.findByUserId((String)jObject.get("id"));
+                    //  UserRepository.findByUserId((String)jObject.get("id"));
                      User = new User();
                      User.setUserId((String)jObject.get("id"));
                      User.setName((String)jObject.get("name"));
-                     if ((String)jObject.get("password")=="")
+                     if (String.valueOf(jObject.get("password")).equals(""))
                           User.setPassword((String)jObject.get("bunpassword"));
                      else
                          User.setPassword((String)jObject.get("password"));
                         
                     User.setHpNo((String)jObject.get("hpNo"));
+                    User.setPushKey((String)jObject.get("pushKey"));
                     User.setModDate(new Date());
     
                     User = UserRepository.save(User);
@@ -128,10 +138,23 @@ public class UserService {
                 return 1;
             }
         } else 
-            return 3;
+            return 3; 
+    }
 
-              
-        
+    @Transactional
+    public Map<String, String> updatePushKey(JSONObject param) {
+        Map<String, String> map = new HashMap<>();
+        String pushKey = param.get("pushKey").toString();
+        String userId = param.get("id").toString();
+
+        try {
+            UserRepository.qUpdatePushKey(pushKey, userId);
+            map.put("result", "SUCCESS");
+        } catch(Exception e) {
+            map.put("result", "FAIL");
+            e.printStackTrace();
+        }
+        return map;
     }
 
     @Transactional
@@ -186,7 +209,7 @@ public class UserService {
             int length = Integer.parseInt(form.get("length").toString());
             int start = Integer.parseInt(form.get("start").toString());
 
-            PageRequest pageRequest = PageRequest.of(start, length);
+            PageRequest pageRequest = PageRequest.of(start, length ,Sort.by("regDate"));
             if (type == "all")
                 list = UserRepository.findAll(pageRequest).getContent();
             else

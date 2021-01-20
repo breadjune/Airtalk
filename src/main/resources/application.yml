@@ -17,6 +17,11 @@ server:
     basedir: .
 
 spring:
+  servlet:
+    multipart:
+      location: /Users/atingle/vscode_workspace/upload
+      max-file-size: 100MB
+      max-request-size: 100MB
   main:
     allow-bean-definition-overriding: true
   devtools:
@@ -25,9 +30,10 @@ spring:
   profiles: local
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.23.16.23:3306/airtalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul
+    # url: jdbc:mysql://172.23.16.23:3306/airtalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://3.34.5.49:3306/airtalk?autoReconnect=true&useSSL=false&serverTimezone=Asia/Seoul
     username: root
-    password: root123
+    password: Root.123
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false

@@ -37,7 +37,6 @@ public class AlarmRecvService {
    * @return List<AlarmRecv>
    */
   public Map<String, Object> list(JSONObject form) {
-    logger.info("AlarmRecvService invoked!");
     List<AlarmRecv> list = new ArrayList<>();
     Map<String, Object> map = new HashMap<>();
   
@@ -143,13 +142,30 @@ public class AlarmRecvService {
   }
 
   /**
+   * 수신자 존재 유무 확인
+   * 
+   * @return AlarmRecv
+   */
+  public boolean recvCheck(int seq, String receiverId) {
+    return alarmRecvRepository.existsByAlarmSeqAndUserId(seq, receiverId);
+  }
+
+  /**
+   * 수신자 정보 조회
+   * 
+   * @return AlarmRecv
+   */
+  public AlarmRecv recvInfo(int seq, String userId) {
+    return alarmRecvRepository.findByAlarmSeqAndUserId(seq, userId);
+  }
+
+  /**
    * 수신자 VO 세팅
    * 
    * @return AlarmRecv
    */
   public AlarmRecv getParameter(JSONObject form, String service) {
     AlarmRecv alarmRecv = new AlarmRecv();
-    SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
     try {
       if(service.equals("create") || service.equals("modify") || service.equals("remove")) {
         alarmRecv.setAlarmSeq(Integer.parseInt(form.get("alarmSeq").toString()));
